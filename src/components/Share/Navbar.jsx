@@ -6,6 +6,9 @@ import { Button } from "@heroui/react";
 import { ThemeSwitcher } from "../ThemeSwitcher";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { ArrowRightFromSquare, Gear, Persons } from "@gravity-ui/icons";
+import { Avatar, Dropdown, Label } from "@heroui/react";
+import { Profile } from "../common/Profile";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -23,6 +26,7 @@ export default function Navbar() {
 
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
+  console.log(user);
 
   const handleSignOut = async () => {
     await authClient.signOut();
@@ -34,13 +38,13 @@ export default function Navbar() {
     return null;
   }
 
+ 
+
   return (
     <nav className="sticky top-0 z-40 w-full border-b border-separator bg-background/70 backdrop-blur-lg">
       <header className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-
         {/* Logo */}
         <div className="flex items-center gap-3 md:gap-4">
-
           {/* Mobile menu */}
           <button
             className="p-1 text-foreground transition-colors hover:text-accent md:hidden"
@@ -70,20 +74,15 @@ export default function Navbar() {
             </svg>
           </button>
 
-
           <Link
             href="/"
             className="flex items-center gap-2 sm:gap-3"
             onClick={closeMenu}
           >
             <Logo />
-            <p className="text-lg font-bold tracking-tight">
-              ReSell Hub
-            </p>
+            <p className="text-lg font-bold tracking-tight">ReSell Hub</p>
           </Link>
-
         </div>
-
 
         {/* Desktop Nav Links */}
         <ul className="hidden items-center gap-6 md:flex">
@@ -103,29 +102,23 @@ export default function Navbar() {
           ))}
         </ul>
 
-
         {/* Desktop Right Side */}
         <div className="hidden items-center gap-3 md:flex">
-
           <ThemeSwitcher />
-
 
           {user ? (
             <>
-              <Link
+            <Profile></Profile>
+              {/* <Link
                 href="/profile"
                 className="text-sm font-medium hover:text-accent"
               >
                 Profile
               </Link>
 
-              <Button
-                color="danger"
-                size="sm"
-                onPress={handleSignOut}
-              >
+              <Button color="danger" size="sm" onPress={handleSignOut}>
                 Sign Out
-              </Button>
+              </Button> */}
             </>
           ) : (
             <>
@@ -137,43 +130,31 @@ export default function Navbar() {
               </Link>
 
               <Link href="/auth/register">
-                <Button
-                  color="primary"
-                  size="sm"
-                >
+                <Button color="primary" size="sm">
                   Sign Up
                 </Button>
               </Link>
             </>
           )}
-
         </div>
-
 
         {/* Mobile Theme */}
         <div className="flex items-center gap-2 md:hidden">
           <ThemeSwitcher />
         </div>
-
       </header>
-
-
 
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="border-t border-separator bg-background px-4 py-6 md:hidden">
-
           <ul className="flex flex-col gap-3">
-
-            {navLinks.map((link)=>(
+            {navLinks.map((link) => (
               <li key={link.name}>
                 <Link
                   href={link.href}
                   onClick={closeMenu}
                   className={`block py-2 text-base font-medium ${
-                    link.isAccent
-                    ? "text-accent"
-                    : "text-foreground"
+                    link.isAccent ? "text-accent" : "text-foreground"
                   }`}
                 >
                   {link.name}
@@ -181,15 +162,73 @@ export default function Navbar() {
               </li>
             ))}
 
-
-
             <li className="mt-2 flex flex-col gap-3 border-t border-separator pt-4">
-
-
               {user ? (
                 <>
+                  <Dropdown>
+                    <Dropdown.Trigger className="rounded-full">
+                      <Avatar>
+                        <Avatar.Image
+                          alt="Junior Garcia"
+                          src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg"
+                        />
+                        <Avatar.Fallback delayMs={600}>JD</Avatar.Fallback>
+                      </Avatar>
+                    </Dropdown.Trigger>
+                    <Dropdown.Popover>
+                      <div className="px-3 pt-3 pb-1">
+                        <div className="flex items-center gap-2">
+                          <Avatar size="sm">
+                            <Avatar.Image
+                              alt="Jane"
+                              src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg"
+                            />
+                            <Avatar.Fallback delayMs={600}>JD</Avatar.Fallback>
+                          </Avatar>
+                          <div className="flex flex-col gap-0">
+                            <p className="text-sm leading-5 font-medium">
+                              Jane Doe
+                            </p>
+                            <p className="text-xs leading-none text-muted">
+                              jane@example.com
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <Dropdown.Menu>
+                        <Dropdown.Item id="dashboard" textValue="Dashboard">
+                          <Label>Dashboard</Label>
+                        </Dropdown.Item>
+                        <Dropdown.Item id="profile" textValue="Profile">
+                          <Label>Profile</Label>
+                        </Dropdown.Item>
+                        <Dropdown.Item id="settings" textValue="Settings">
+                          <div className="flex w-full items-center justify-between gap-2">
+                            <Label>Settings</Label>
+                            <Gear className="size-3.5 text-muted" />
+                          </div>
+                        </Dropdown.Item>
+                        <Dropdown.Item id="new-project" textValue="New project">
+                          <div className="flex w-full items-center justify-between gap-2">
+                            <Label>Create Team</Label>
+                            <Persons className="size-3.5 text-muted" />
+                          </div>
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                          id="logout"
+                          textValue="Logout"
+                          variant="danger"
+                        >
+                          <div className="flex w-full items-center justify-between gap-2">
+                            <Label>Log Out</Label>
+                            <ArrowRightFromSquare className="size-3.5 text-danger" />
+                          </div>
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown.Popover>
+                  </Dropdown>
 
-                  <Link
+                  {/* <Link
                     href="/profile"
                     onClick={closeMenu}
                     className="text-center py-2 font-medium"
@@ -204,12 +243,10 @@ export default function Navbar() {
                     onPress={handleSignOut}
                   >
                     Sign Out
-                  </Button>
-
+                  </Button> */}
                 </>
               ) : (
                 <>
-
                   <Link
                     href="/auth/login"
                     onClick={closeMenu}
@@ -218,33 +255,20 @@ export default function Navbar() {
                     Login
                   </Link>
 
-
                   <Link href="/auth/register">
-                    <Button
-                      color="primary"
-                      className="w-full"
-                    >
+                    <Button color="primary" className="w-full">
                       Sign Up
                     </Button>
                   </Link>
-
                 </>
               )}
-
-
             </li>
-
-
           </ul>
-
         </div>
       )}
-
     </nav>
   );
 }
-
-
 
 function Logo() {
   return (

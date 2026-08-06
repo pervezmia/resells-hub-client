@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Form, TextField, Label, Input, FieldError, Button } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,10 +21,20 @@ export default function LoginPage() {
     const formData = new FormData(e.currentTarget);
     const user = Object.fromEntries(formData.entries());
 
-    await authClient.signIn.email({
+    const {data, error} = await authClient.signIn.email({
       ...user,
-      callbackURL:"/",
+      callbackURL:"/dashboard",
     })
+    if (error) {
+      toast.error(error.message || "Login failed");
+      return;
+    }
+    if (data) {
+      toast.success("Login successfully!");
+      router.push("/dashboard");
+      router.refresh();
+    }
+
   };
 
 
@@ -73,7 +84,7 @@ export default function LoginPage() {
 
         <p className="mt-6 text-center text-sm text-foreground/60">
           Don't have an account?{" "}
-          <Link href="/register" className="font-medium text-accent">
+          <Link href="/auth/register" className="font-medium text-accent">
             Register
           </Link>
         </p>

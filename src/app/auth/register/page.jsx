@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Form,
   TextField,
@@ -13,7 +13,8 @@ import {
   Select,
   ListBox,
 } from "@heroui/react";
-import { authClient } from "@/lib/auth-client";
+import { authClient, signOut } from "@/lib/auth-client";
+import toast from "react-hot-toast";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -31,11 +32,21 @@ export default function RegisterPage() {
     const formData = new FormData(e.currentTarget);
     const user = Object.fromEntries(formData.entries());
 
-    await authClient.signUp.email({
+    const { data, error } = await authClient.signUp.email({
       ...user,
     });
+    if (error) {
+      toast.error(error.message || "Register failed!");
+      return;
+    }
+    if (data) {
+      await authClient.signOut();
+      toast.success("Registered successfully! Please login");
 
-    redirect("/");
+      router.push("/auth/login");
+
+      router.refresh();
+    }
   };
 
   return (
@@ -90,6 +101,12 @@ export default function RegisterPage() {
             <FieldError />
           </TextField>
 
+          <TextField name="image">
+            <Label>Profile Image URL</Label>
+            <Input placeholder="Enter image URL" />
+            <FieldError />
+          </TextField>
+
           <TextField
             isRequired
             type="password"
@@ -122,7 +139,7 @@ export default function RegisterPage() {
 
         <p className="mt-6 text-center text-sm text-foreground/60">
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-primary">
+          <Link href="/auth/login" className="font-medium text-primary">
             Login
           </Link>
         </p>
