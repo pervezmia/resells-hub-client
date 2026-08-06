@@ -1,22 +1,51 @@
-"use client"
+"use client";
+
 import { useState } from "react";
-import { Link, Button } from "@heroui/react";
+import Link from "next/link";
+import { Button } from "@heroui/react";
 import { ThemeSwitcher } from "../ThemeSwitcher";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+
+const navLinks = [
+  { name: "Home", href: "/" },
+  { name: "Products", href: "/products" },
+  { name: "Categories", href: "/categories" },
+  { name: "Dashboard", href: "/dashboard", isAccent: true },
+];
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const closeMenu = () => setIsMenuOpen(false);
+
+  const router = useRouter();
+
+  const { data: session, isPending } = authClient.useSession();
+  const user = session?.user;
+
+  const handleSignOut = async () => {
+    await authClient.signOut();
+    router.push("/auth/login");
+    router.refresh();
+  };
+
+  if (isPending) {
+    return null;
+  }
+
   return (
     <nav className="sticky top-0 z-40 w-full border-b border-separator bg-background/70 backdrop-blur-lg">
-      <header className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
-        <div className="flex items-center gap-4">
+      <header className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+
+        {/* Logo */}
+        <div className="flex items-center gap-3 md:gap-4">
+
+          {/* Mobile menu */}
           <button
-            className="md:hidden"
+            className="p-1 text-foreground transition-colors hover:text-accent md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-            aria-expanded={isMenuOpen}
           >
-            <span className="sr-only">Menu</span>
             <svg
               className="h-6 w-6"
               fill="none"
@@ -40,83 +69,187 @@ export default function Navbar() {
               )}
             </svg>
           </button>
-          <div className="flex items-center gap-3">
+
+
+          <Link
+            href="/"
+            className="flex items-center gap-2 sm:gap-3"
+            onClick={closeMenu}
+          >
             <Logo />
-            <p className="font-bold">ReSell Hub</p>
-          </div>
+            <p className="text-lg font-bold tracking-tight">
+              ReSell Hub
+            </p>
+          </Link>
+
         </div>
 
-        <ul className="hidden items-center gap-4 md:flex">
-          <li>
-            <Link href="/">Home</Link>
-          </li>
-          <li>
-            <Link href="/products">Products</Link>
-          </li>
-          <li>
-            <Link href="/categories">Categories</Link>
-          </li>
-          <li>
-            <Link href="/dashboard" className="font-medium text-accent" aria-current="page">
-              Dashboard
-            </Link>
-          </li>
+
+        {/* Desktop Nav Links */}
+        <ul className="hidden items-center gap-6 md:flex">
+          {navLinks.map((link) => (
+            <li key={link.name}>
+              <Link
+                href={link.href}
+                className={`text-sm font-medium transition-colors hover:text-accent ${
+                  link.isAccent
+                    ? "text-accent font-semibold"
+                    : "text-foreground/80"
+                }`}
+              >
+                {link.name}
+              </Link>
+            </li>
+          ))}
         </ul>
 
-        <div className="hidden items-center gap-4 md:flex">
-          <div className="hidden lg:block">
-            <ThemeSwitcher />
-          </div>
-          <Link href="/login">Login</Link>
-          <Link href="/register">
-            <Button>Sign Up</Button>
-          </Link>
-        </div>
-      </header>
 
-      {isMenuOpen && (
-        <div className="border-t border-separator md:hidden">
-          <ul className="flex flex-col gap-2 p-4">
-            <li>
-              <Link href="/" className="block py-2">
-                Home
+        {/* Desktop Right Side */}
+        <div className="hidden items-center gap-3 md:flex">
+
+          <ThemeSwitcher />
+
+
+          {user ? (
+            <>
+              <Link
+                href="/profile"
+                className="text-sm font-medium hover:text-accent"
+              >
+                Profile
               </Link>
-            </li>
-            <li>
-              <Link href="/products" className="block py-2">
-                Products
-              </Link>
-            </li>
-            <li>
-              <Link href="/categories" className="block py-2">
-                Categories
-              </Link>
-            </li>
-            <li>
-              <Link href="/dashboard" className="block py-2 font-medium text-accent">
-                Dashboard
-              </Link>
-            </li>
-            <li className="mt-4 flex flex-col gap-3 border-t border-separator pt-4">
-              <ThemeSwitcher />
-              <Link href="/login" className="block py-2">
+
+              <Button
+                color="danger"
+                size="sm"
+                onPress={handleSignOut}
+              >
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/auth/login"
+                className="text-sm font-medium hover:text-accent"
+              >
                 Login
               </Link>
-              <Link href="/register">
-                <Button className="w-full">Sign Up</Button>
+
+              <Link href="/auth/register">
+                <Button
+                  color="primary"
+                  size="sm"
+                >
+                  Sign Up
+                </Button>
               </Link>
+            </>
+          )}
+
+        </div>
+
+
+        {/* Mobile Theme */}
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeSwitcher />
+        </div>
+
+      </header>
+
+
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="border-t border-separator bg-background px-4 py-6 md:hidden">
+
+          <ul className="flex flex-col gap-3">
+
+            {navLinks.map((link)=>(
+              <li key={link.name}>
+                <Link
+                  href={link.href}
+                  onClick={closeMenu}
+                  className={`block py-2 text-base font-medium ${
+                    link.isAccent
+                    ? "text-accent"
+                    : "text-foreground"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              </li>
+            ))}
+
+
+
+            <li className="mt-2 flex flex-col gap-3 border-t border-separator pt-4">
+
+
+              {user ? (
+                <>
+
+                  <Link
+                    href="/profile"
+                    onClick={closeMenu}
+                    className="text-center py-2 font-medium"
+                  >
+                    Profile
+                  </Link>
+
+
+                  <Button
+                    color="danger"
+                    className="w-full"
+                    onPress={handleSignOut}
+                  >
+                    Sign Out
+                  </Button>
+
+                </>
+              ) : (
+                <>
+
+                  <Link
+                    href="/auth/login"
+                    onClick={closeMenu}
+                    className="text-center py-2 font-medium"
+                  >
+                    Login
+                  </Link>
+
+
+                  <Link href="/auth/register">
+                    <Button
+                      color="primary"
+                      className="w-full"
+                    >
+                      Sign Up
+                    </Button>
+                  </Link>
+
+                </>
+              )}
+
+
             </li>
+
+
           </ul>
+
         </div>
       )}
+
     </nav>
   );
 }
 
+
+
 function Logo() {
   return (
     <svg
-      className="h-7 w-7 text-accent"
+      className="h-7 w-7 text-accent shrink-0"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

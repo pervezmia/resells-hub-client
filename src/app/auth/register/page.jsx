@@ -2,8 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Form, TextField, Label, Input, FieldError, Button, Select, ListBox } from "@heroui/react";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
+import {
+  Form,
+  TextField,
+  Label,
+  Input,
+  FieldError,
+  Button,
+  Select,
+  ListBox,
+} from "@heroui/react";
+import { authClient } from "@/lib/auth-client";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -12,33 +22,20 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState(searchParams.get("role") || "buyer");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, role }),
-      });
+    const formData = new FormData(e.currentTarget);
+    const user = Object.fromEntries(formData.entries());
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || "Registration failed");
-      }
+    await authClient.signUp.email({
+      ...user,
+    });
 
-      router.push("/login");
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const handleGoogleSignUp = () => {
-    window.location.href = "/api/auth/google";
+    redirect("/");
   };
 
   return (
@@ -51,10 +48,10 @@ export default function RegisterPage() {
 
         <Form onSubmit={handleSubmit} className="space-y-4">
           <Select
+            isRequired
+            name="role"
             className="w-full"
             placeholder="Select account type"
-            selectedKey={role}
-            onSelectionChange={setRole}
           >
             <Label>Register as</Label>
             <Select.Trigger>
@@ -63,11 +60,11 @@ export default function RegisterPage() {
             </Select.Trigger>
             <Select.Popover>
               <ListBox>
-                <ListBox.Item id="buyer" textValue="Buyer">
+                <ListBox.Item id="buyer" textValue="buyer">
                   Buyer
                   <ListBox.ItemIndicator />
                 </ListBox.Item>
-                <ListBox.Item id="seller" textValue="Seller">
+                <ListBox.Item id="seller" textValue="seller">
                   Seller
                   <ListBox.ItemIndicator />
                 </ListBox.Item>
@@ -81,7 +78,13 @@ export default function RegisterPage() {
             <FieldError />
           </TextField>
 
-          <TextField isRequired type="email" name="email" value={email} onChange={setEmail}>
+          <TextField
+            isRequired
+            type="email"
+            name="email"
+            value={email}
+            onChange={setEmail}
+          >
             <Label>Email</Label>
             <Input placeholder="Enter your email" />
             <FieldError />
@@ -113,7 +116,7 @@ export default function RegisterPage() {
           <div className="h-px flex-1 bg-border" />
         </div>
 
-        <Button variant="outline" className="w-full" onClick={handleGoogleSignUp}>
+        <Button variant="outline" className="w-full">
           Continue with Google
         </Button>
 
