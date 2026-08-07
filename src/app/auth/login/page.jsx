@@ -23,7 +23,7 @@ export default function LoginPage() {
 
     const {data, error} = await authClient.signIn.email({
       ...user,
-      callbackURL:"/dashboard",
+      callbackURL:"/",
     })
     if (error) {
       toast.error(error.message || "Login failed");
@@ -31,7 +31,7 @@ export default function LoginPage() {
     }
     if (data) {
       toast.success("Login successfully!");
-      router.push("/dashboard");
+      router.push("/");
       router.refresh();
     }
 

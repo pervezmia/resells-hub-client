@@ -1,4 +1,5 @@
-import { getProducts } from '@/lib/data';
+
+import { getProducts } from '@/lib/api/product';
 import React from 'react';
 
 const Products = async () => {

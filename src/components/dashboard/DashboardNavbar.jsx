@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { sidebarLinks, bottomLinks } from "./sidebarLinks";
+import { Profile } from "../common/Profile";
 
 export default function DashboardNavbar() {
   const { data: session } = authClient.useSession();
@@ -38,7 +39,8 @@ export default function DashboardNavbar() {
         <Briefcase className="size-5 text-foreground" />
         <Bell className="size-5 text-foreground" />
         <Avatar size="sm">
-          <Avatar.Image alt={user?.name} src={user?.image} />
+          {/* <Avatar.Image alt={user?.name} src={user?.image} /> */}
+          <Profile></Profile>
           <Avatar.Fallback>{user?.name?.charAt(0)}</Avatar.Fallback>
         </Avatar>
       </div>
