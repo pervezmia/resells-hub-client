@@ -1,6 +1,12 @@
+"use client"
 import { Link } from "@heroui/react";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathName = usePathname();
+  if (pathName.includes("dashboard")) {
+    return null;
+  }
   return (
     <footer className="w-full border-t border-separator bg-background">
       <div className="mx-auto max-w-5xl px-6 py-10">

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@heroui/react";
 import { ThemeSwitcher } from "../ThemeSwitcher";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ArrowRightFromSquare, Gear, Persons } from "@gravity-ui/icons";
 import { Avatar, Dropdown, Label } from "@heroui/react";
 import { Profile } from "../common/Profile";
@@ -21,12 +21,16 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const closeMenu = () => setIsMenuOpen(false);
-
+  const pathName = usePathname();
   const router = useRouter();
 
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
   console.log(user);
+
+  if(pathName.includes("dashboard")){
+    return null;
+  }
 
   const handleSignOut = async () => {
     await authClient.signOut();
