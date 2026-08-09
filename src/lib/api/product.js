@@ -28,3 +28,13 @@ export async function getAllProducts(searchParams = {}) {
   }
   return res.json();
 }
+
+// single product 
+export async function getProductById(id) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/product/${id}`,
+    { cache: "no-store" }
+  );
+  if (!res.ok) return null;
+  return res.json();
+}
