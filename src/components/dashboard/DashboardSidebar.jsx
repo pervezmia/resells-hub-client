@@ -21,9 +21,9 @@ export default function DashboardSidebar() {
                  md:flex md:w-[72px] lg:w-64"
     >
       <div className="flex h-16 items-center justify-center border-b border-border px-4 lg:justify-start">
-        <span className="hidden text-lg font-bold text-foreground lg:block">
+        <Link href={"/"}><span className="hidden text-lg font-bold text-foreground lg:block">
           ReSell Hub
-        </span>
+        </span></Link>
         <span className="text-lg font-bold text-accent lg:hidden">RH</span>
       </div>
 
