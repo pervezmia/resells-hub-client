@@ -1,12 +1,33 @@
- 'use server'
+'use server'
+
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
- export const createProduct = async (newProductData) => {
-    const res = await fetch(`${baseUrl}/api/product`, {
-        method: "POST",
-        headers: {
-            "Content-Type" : "application/json",
-        },
-        body: JSON.stringify(newProductData)
-    })
-    return res.json();
- }
+
+export const createProduct = async (newProductData) => {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session?.user) {
+    return { error: "You must be logged in to add a product." };
+  }
+
+  const payload = {
+    ...newProductData,
+    sellerInfo: {
+      userId: session.user.id,
+      name: session.user.name,
+      email: session.user.email,
+    },
+  };
+
+  const res = await fetch(`${baseUrl}/api/product`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  return res.json();
+};
