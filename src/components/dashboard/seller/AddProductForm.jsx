@@ -1,6 +1,7 @@
 "use client";
 
 import { createProduct } from "@/lib/actions/product";
+import { PRODUCT_CATEGORIES, PRODUCT_CONDITIONS } from "@/lib/constants";
 import {
   Button,
   Description,
@@ -19,55 +20,52 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const categories = ["Electronics", "Furniture", "Vehicles", "Fashion", "Mobile Phones"];
-const conditions = ["New", "Like New", "Good", "Refurbished"];
-
 export default function AddProductForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const onSubmit = async (e) => {
-  e.preventDefault();
-  const form = e.currentTarget; 
-  setLoading(true);
-  setError("");
+    e.preventDefault();
+    const form = e.currentTarget;
+    setLoading(true);
+    setError("");
 
-  const formData = new FormData(form);
-  const raw = Object.fromEntries(formData.entries());
+    const formData = new FormData(form);
+    const raw = Object.fromEntries(formData.entries());
 
-  const images = raw.images
-    .split(",")
-    .map((url) => url.trim())
-    .filter(Boolean);
+    const images = raw.images
+      .split(",")
+      .map((url) => url.trim())
+      .filter(Boolean);
 
-  const payload = {
-    title: raw.title,
-    category: raw.category,
-    condition: raw.condition,
-    price: Number(raw.price),
-    stock: Number(raw.stock),
-    images,
-    description: raw.description,
-    status: "available",
-  };
+    const payload = {
+      title: raw.title,
+      category: raw.category,
+      condition: raw.condition,
+      price: Number(raw.price),
+      stock: Number(raw.stock),
+      images,
+      description: raw.description,
+      status: "available",
+    };
 
-  try {
-    const result = await createProduct(payload);
-    if (result?.insertedId) {
-      toast.success("Product posted successfully!");
-      form.reset(); // ✅ এখন safe
-      router.push("/dashboard/seller/my-products");
-    } else if (result?.error) {
-      setError(result.error);
+    try {
+      const result = await createProduct(payload);
+      if (result?.insertedId) {
+        toast.success("Product posted successfully!");
+        form.reset();
+        router.push("/dashboard/seller/my-products");
+      } else if (result?.error) {
+        setError(result.error);
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong while adding the product. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error(err);
-    setError("Something went wrong while adding the product. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -96,7 +94,7 @@ export default function AddProductForm() {
                   </Select.Trigger>
                   <Select.Popover>
                     <ListBox>
-                      {categories.map((cat) => (
+                      {PRODUCT_CATEGORIES.map((cat) => (
                         <ListBox.Item key={cat} id={cat} textValue={cat}>
                           {cat}
                           <ListBox.ItemIndicator />
@@ -114,7 +112,7 @@ export default function AddProductForm() {
                   </Select.Trigger>
                   <Select.Popover>
                     <ListBox>
-                      {conditions.map((c) => (
+                      {PRODUCT_CONDITIONS.map((c) => (
                         <ListBox.Item key={c} id={c} textValue={c}>
                           {c}
                           <ListBox.ItemIndicator />

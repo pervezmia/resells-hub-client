@@ -13,6 +13,7 @@ const AllProductsPage = async ({ searchParams }) => {
 
   const { products, totalCount, totalPages, currentPage } = await getAllProducts({
     search: params?.search,
+    category: params?.category,
     sort: params?.sort,
     page: params?.page,
     limit: 8,
@@ -20,7 +21,9 @@ const AllProductsPage = async ({ searchParams }) => {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-foreground">All Products</h1>
+      <h1 className="text-2xl font-bold text-foreground">
+        {params?.category || "All Products"}
+      </h1>
       <p className="mt-1 text-sm text-muted">
         {totalCount} product{totalCount === 1 ? "" : "s"} available.
       </p>

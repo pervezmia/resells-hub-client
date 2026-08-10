@@ -31,3 +31,11 @@ export const createProduct = async (newProductData) => {
 
   return res.json();
 };
+
+
+export const deleteProduct = async (id) => {
+  const res = await fetch(`${baseUrl}/api/product/${id}`, {
+    method: "DELETE",
+  });
+  return res.json();
+};

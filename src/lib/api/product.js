@@ -38,3 +38,23 @@ export async function getProductById(id) {
   if (!res.ok) return null;
   return res.json();
 }
+
+export async function getCategoryCounts(categories) {
+  const counts = await Promise.all(
+    categories.map(async (category) => {
+      const params = new URLSearchParams({
+        category,
+        status: "available",
+        limit: "0",
+      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/product?${params.toString()}`,
+        { cache: "no-store" }
+      );
+      if (!res.ok) return { category, count: 0 };
+      const data = await res.json();
+      return { category, count: data.totalCount || 0 };
+    })
+  );
+  return counts;
+}

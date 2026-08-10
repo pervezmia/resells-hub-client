@@ -4,11 +4,17 @@ import { Input, Select, ListBox, Surface, Button } from "@heroui/react";
 import { Magnifier } from "@gravity-ui/icons";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useState, useTransition } from "react";
+import { PRODUCT_CATEGORIES } from "@/lib/constants";
 
 const sortOptions = [
   { id: "", label: "Newest first" },
   { id: "price_asc", label: "Price: Low to High" },
   { id: "price_desc", label: "Price: High to Low" },
+];
+
+const categoryOptions = [
+  { id: "", label: "All categories" },
+  ...PRODUCT_CATEGORIES.map((cat) => ({ id: cat, label: cat })),
 ];
 
 export default function ProductFilters() {
@@ -67,6 +73,29 @@ export default function ProductFilters() {
             </Button>
           </div>
         </form>
+
+        <Select
+          aria-label="Filter by category"
+          placeholder="Category"
+          selectedKey={searchParams.get("category") || ""}
+          onSelectionChange={(key) => updateParams({ category: key })}
+          className="sm:w-48"
+        >
+          <Select.Trigger>
+            <Select.Value />
+            <Select.Indicator />
+          </Select.Trigger>
+          <Select.Popover>
+            <ListBox>
+              {categoryOptions.map((opt) => (
+                <ListBox.Item key={opt.id} id={opt.id} textValue={opt.label}>
+                  {opt.label}
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+              ))}
+            </ListBox>
+          </Select.Popover>
+        </Select>
 
         <Select
           aria-label="Sort products by"
