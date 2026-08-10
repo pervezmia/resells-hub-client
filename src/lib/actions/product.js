@@ -39,3 +39,15 @@ export const deleteProduct = async (id) => {
   });
   return res.json();
 };
+
+
+export const updateProduct = async (id, updatedData) => {
+  const res = await fetch(`${baseUrl}/api/product/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(updatedData),
+  });
+  return res.json();
+};

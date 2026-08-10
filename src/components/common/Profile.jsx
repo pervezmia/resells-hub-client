@@ -17,7 +17,7 @@ export function Profile() {
 
   const handleAction = (key) => {
     if (key === "dashboard") router.push("/dashboard");
-    else if (key === "profile") router.push("/dashboard/profile");
+    else if (key === "profile") router.push("/dashboard/seller/profile");
     else if (key === "logout") handleLogout();
   };
 

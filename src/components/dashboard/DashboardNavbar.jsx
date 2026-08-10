@@ -1,13 +1,14 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { Bars, Briefcase, Bell } from "@gravity-ui/icons";
+import { Bars, Briefcase, Bell, Xmark } from "@gravity-ui/icons";
 import { Avatar, Button, Drawer } from "@heroui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { sidebarLinks, bottomLinks } from "./sidebarLinks";
 import { Profile } from "../common/Profile";
+
 
 export default function DashboardNavbar() {
   const { data: session } = authClient.useSession();
@@ -38,11 +39,7 @@ export default function DashboardNavbar() {
       <div className="flex items-center gap-4">
         <Briefcase className="size-5 text-foreground" />
         <Bell className="size-5 text-foreground" />
-        <Avatar size="sm">
-          {/* <Avatar.Image alt={user?.name} src={user?.image} /> */}
-          <Profile></Profile>
-          <Avatar.Fallback>{user?.name?.charAt(0)}</Avatar.Fallback>
-        </Avatar>
+        <Profile />
       </div>
 
       {/* Mobile Drawer — hamburger-এ ক্লিক করলে খুলবে */}
@@ -50,7 +47,9 @@ export default function DashboardNavbar() {
         <Drawer.Backdrop>
           <Drawer.Content placement="left">
             <Drawer.Dialog>
-              <Drawer.CloseTrigger />
+              <Drawer.CloseTrigger aria-label="Close menu">
+                <Xmark width={18} height={18} />
+              </Drawer.CloseTrigger>
               <Drawer.Header>
                 <Drawer.Heading>ReSell Hub</Drawer.Heading>
               </Drawer.Header>
