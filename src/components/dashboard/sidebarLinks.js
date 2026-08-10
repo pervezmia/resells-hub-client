@@ -1,4 +1,4 @@
-import { House, Person, Gear, Bell,ShoppingBag, ShoppingCart, Bookmark, LifeRing} from "@gravity-ui/icons";
+import { House, Person, Gear, Bell,ShoppingBag, ShoppingCart, Bookmark, LifeRing, ClockArrowRotateLeft} from "@gravity-ui/icons";
 import {
   MdOutlineAddBox,
   MdOutlineInventory2,
@@ -15,6 +15,7 @@ export const sidebarLinks = {
     { name: "Wishlist", href: "/dashboard/buyer/wishlist", icon: Bookmark },
     { name: "Cart", href: "/dashboard/buyer/cart", icon: ShoppingCart },
     { name: "Support", href: "/dashboard/buyer/support", icon: LifeRing },
+    { name: "Payment History", href: "/dashboard/buyer/payment-history", icon: ClockArrowRotateLeft },
   ],
 
   seller: [
