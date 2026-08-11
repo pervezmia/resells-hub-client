@@ -1,6 +1,6 @@
-import { Surface } from "@heroui/react";
-import Image from "next/image";
+import { Surface, Button } from "@heroui/react";
 import Link from "next/link";
+import Image from "next/image";
 
 const conditionStyles = {
   New: "bg-success-soft text-success",
@@ -12,10 +12,10 @@ const conditionStyles = {
 
 export default function ProductCard({ product }) {
   return (
-    <Link href={`/products/${product._id}`}>
-      <Surface className="group overflow-hidden rounded-3xl border border-border bg-surface transition-shadow hover:shadow-lg">
+    <Surface className="group overflow-hidden rounded-3xl border border-border bg-surface transition-shadow hover:shadow-lg">
+      
         <div className="relative aspect-square w-full overflow-hidden bg-background">
-         <Image
+          <Image
             src={product.images?.[0]}
             alt={product.title}
             fill
@@ -24,25 +24,32 @@ export default function ProductCard({ product }) {
           />
         </div>
 
-        <div className="p-4">
-          <span
-            className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${
-              conditionStyles[product.condition] || "bg-surface text-muted"
-            }`}
-          >
-            {product.condition}
-          </span>
+      <div className="p-4">
+        <span
+          className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${
+            conditionStyles[product.condition] || "bg-surface text-muted"
+          }`}
+        >
+          {product.condition}
+        </span>
 
-          <h3 className="mt-2 line-clamp-1 font-semibold text-foreground">
+        <Link href={`/products/${product._id}`}>
+          <h3 className="mt-2 line-clamp-1 font-semibold text-foreground hover:text-accent">
             {product.title}
           </h3>
-          <p className="text-xs text-muted">{product.category}</p>
+        </Link>
+        <p className="text-xs text-muted">{product.category}</p>
 
-          <p className="mt-2 text-lg font-bold text-foreground">
-            ৳{product.price?.toLocaleString()}
-          </p>
-        </div>
-      </Surface>
-    </Link>
+        <p className="mt-2 text-lg font-bold text-foreground">
+          ৳{product.price?.toLocaleString()}
+        </p>
+
+        <Link href={`/products/${product._id}`}>
+          <Button variant="secondary" className="mt-3 w-full">
+            View Details
+          </Button>
+        </Link>
+      </div>
+    </Surface>
   );
 }

@@ -6,8 +6,10 @@ import {
   HeartFill,
   ShoppingBasket,
   ShoppingCart,
+  ArrowLeft,
 } from "@gravity-ui/icons";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -23,6 +25,9 @@ export default function ProductDetails({
   const [activeImage, setActiveImage] = useState(0);
   const [wishlisted, setWishlisted] = useState(initialWishlisted);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+  const { addToCart } = useCart();
+
+  const inStock = (product.stock ?? 1) > 0;
 
   const handleWishlist = async () => {
     if (!buyerId) {
@@ -64,8 +69,7 @@ export default function ProductDetails({
       setWishlistLoading(false);
     }
   };
-  const { addToCart } = useCart();
-  
+
   const handleAddToCart = () => {
     addToCart(product, 1);
     toast.success("Added to cart!");
@@ -78,6 +82,15 @@ export default function ProductDetails({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
+      {/* Back button */}
+      <button
+        onClick={() => router.back()}
+        className="mb-4 flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-foreground"
+      >
+        <ArrowLeft width={16} height={16} />
+        Back
+      </button>
+
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <div>
           <div className="relative aspect-square w-full overflow-hidden rounded-3xl bg-background">
@@ -114,9 +127,20 @@ export default function ProductDetails({
         </div>
 
         <div>
-          <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-medium text-accent">
-            {product.condition}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-medium text-accent">
+              {product.condition}
+            </span>
+            <span
+              className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                inStock
+                  ? "bg-success-soft text-success"
+                  : "bg-danger-soft text-danger"
+              }`}
+            >
+              {inStock ? `${product.stock ?? 1} in stock` : "Out of stock"}
+            </span>
+          </div>
 
           <h1 className="mt-2 text-2xl font-bold text-foreground">
             {product.title}
@@ -154,7 +178,7 @@ export default function ProductDetails({
               variant="secondary"
               className="flex-1"
               onPress={handleAddToCart}
-              isDisabled={product.stock === 0}
+              isDisabled={!inStock}
             >
               <span className="flex items-center gap-1.5">
                 <ShoppingBasket width={16} height={16} />
@@ -164,7 +188,7 @@ export default function ProductDetails({
             <Button
               className="flex-1 bg-accent text-accent-foreground"
               onPress={handleBuyNow}
-              isDisabled={product.stock === 0}
+              isDisabled={!inStock}
             >
               <span className="flex items-center gap-1.5">
                 <ShoppingCart width={16} height={16} />
