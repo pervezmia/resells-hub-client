@@ -1,14 +1,24 @@
 "use client";
 
 import { Surface, Button } from "@heroui/react";
-import { Heart, HeartFill, ShoppingCart } from "@gravity-ui/icons";
+import {
+  Heart,
+  HeartFill,
+  ShoppingBasket,
+  ShoppingCart,
+} from "@gravity-ui/icons";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { addToWishlist, removeFromWishlist } from "@/lib/actions/wishlist";
+import { useCart } from "@/context/CartContext";
 
-export default function ProductDetails({ product, buyerId, initialWishlisted = false }) {
+export default function ProductDetails({
+  product,
+  buyerId,
+  initialWishlisted = false,
+}) {
   const router = useRouter();
   const [activeImage, setActiveImage] = useState(0);
   const [wishlisted, setWishlisted] = useState(initialWishlisted);
@@ -54,10 +64,16 @@ export default function ProductDetails({ product, buyerId, initialWishlisted = f
       setWishlistLoading(false);
     }
   };
+  const { addToCart } = useCart();
+  
+  const handleAddToCart = () => {
+    addToCart(product, 1);
+    toast.success("Added to cart!");
+  };
 
   const handleBuyNow = () => {
-    toast.success("Redirecting to checkout...");
-    // TODO: checkout flow পরে যোগ হবে
+    addToCart(product, 1);
+    router.push("/dashboard/buyer/cart");
   };
 
   return (
@@ -85,7 +101,12 @@ export default function ProductDetails({ product, buyerId, initialWishlisted = f
                     i === activeImage ? "border-accent" : "border-border"
                   }`}
                 >
-                  <Image src={img} alt={`${product.title} ${i + 1}`} fill className="object-cover" />
+                  <Image
+                    src={img}
+                    alt={`${product.title} ${i + 1}`}
+                    fill
+                    className="object-cover"
+                  />
                 </button>
               ))}
             </div>
@@ -97,7 +118,9 @@ export default function ProductDetails({ product, buyerId, initialWishlisted = f
             {product.condition}
           </span>
 
-          <h1 className="mt-2 text-2xl font-bold text-foreground">{product.title}</h1>
+          <h1 className="mt-2 text-2xl font-bold text-foreground">
+            {product.title}
+          </h1>
           <p className="text-sm text-muted">{product.category}</p>
 
           <p className="mt-4 text-3xl font-bold text-foreground">
@@ -105,14 +128,20 @@ export default function ProductDetails({ product, buyerId, initialWishlisted = f
           </p>
 
           <Surface className="mt-6 rounded-2xl border border-border bg-surface p-4">
-            <h2 className="text-sm font-semibold text-foreground">Description</h2>
+            <h2 className="text-sm font-semibold text-foreground">
+              Description
+            </h2>
             <p className="mt-1 text-sm text-muted">{product.description}</p>
           </Surface>
 
           {product.sellerInfo && (
             <Surface className="mt-4 rounded-2xl border border-border bg-surface p-4">
-              <h2 className="text-sm font-semibold text-foreground">Seller Information</h2>
-              <p className="mt-1 text-sm text-foreground">{product.sellerInfo.name}</p>
+              <h2 className="text-sm font-semibold text-foreground">
+                Seller Information
+              </h2>
+              <p className="mt-1 text-sm text-foreground">
+                {product.sellerInfo.name}
+              </p>
               <p className="text-xs text-muted">{product.sellerInfo.email}</p>
               {product.sellerInfo.phone && (
                 <p className="text-xs text-muted">{product.sellerInfo.phone}</p>
@@ -122,8 +151,20 @@ export default function ProductDetails({ product, buyerId, initialWishlisted = f
 
           <div className="mt-6 flex gap-3">
             <Button
+              variant="secondary"
+              className="flex-1"
+              onPress={handleAddToCart}
+              isDisabled={product.stock === 0}
+            >
+              <span className="flex items-center gap-1.5">
+                <ShoppingBasket width={16} height={16} />
+                Add to Cart
+              </span>
+            </Button>
+            <Button
               className="flex-1 bg-accent text-accent-foreground"
               onPress={handleBuyNow}
+              isDisabled={product.stock === 0}
             >
               <span className="flex items-center gap-1.5">
                 <ShoppingCart width={16} height={16} />
@@ -133,7 +174,9 @@ export default function ProductDetails({ product, buyerId, initialWishlisted = f
             <Button
               variant="ghost"
               isIconOnly
-              aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              aria-label={
+                wishlisted ? "Remove from wishlist" : "Add to wishlist"
+              }
               isDisabled={wishlistLoading}
               onPress={handleWishlist}
             >

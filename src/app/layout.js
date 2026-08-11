@@ -4,6 +4,7 @@ import Navbar from "@/components/Share/Navbar";
 import Footer from "@/components/Share/Footer";
 import AosInit from "@/components/common/AosInit";
 import { Toaster } from "react-hot-toast";
+import { CartProvider } from "@/context/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +18,8 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Resells Hub || Buy and Sell Pre-Owned Products, Safely and Easily",
-  description: "ReSell Hub connects buyers and sellers of second-hand goods, reducing waste and helping you find great deals or earn from items you no longer need",
+  description:
+    "ReSell Hub connects buyers and sellers of second-hand goods, reducing waste and helping you find great deals or earn from items you no longer need",
 };
 
 export default function RootLayout({ children }) {
@@ -29,10 +31,10 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col">
         <Navbar></Navbar>
+        <Toaster></Toaster>
         <main>
           <AosInit></AosInit>
-          <Toaster></Toaster>
-          {children}
+          <CartProvider>{children}</CartProvider>
         </main>
         <Footer></Footer>
       </body>
