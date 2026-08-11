@@ -1,18 +1,58 @@
 "use client";
 
 import { Surface, Button } from "@heroui/react";
-import { ArrowLeft, Heart, ShoppingCart } from "@gravity-ui/icons";
+import { Heart, HeartFill, ShoppingCart } from "@gravity-ui/icons";
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import Link from "next/link";
+import { addToWishlist, removeFromWishlist } from "@/lib/actions/wishlist";
 
-export default function ProductDetails({ product }) {
+export default function ProductDetails({ product, buyerId, initialWishlisted = false }) {
+  const router = useRouter();
   const [activeImage, setActiveImage] = useState(0);
+  const [wishlisted, setWishlisted] = useState(initialWishlisted);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
 
-  const handleWishlist = () => {
-    toast.success("Added to wishlist!");
-    // TODO: wishlist action পরে যোগ হবে
+  const handleWishlist = async () => {
+    if (!buyerId) {
+      toast.error("Please log in to save products to your wishlist.");
+      router.push("/auth/login");
+      return;
+    }
+
+    setWishlistLoading(true);
+    try {
+      if (wishlisted) {
+        const result = await removeFromWishlist(buyerId, product._id);
+        if (result?.error) {
+          toast.error(result.error);
+        } else {
+          setWishlisted(false);
+          toast.success("Removed from wishlist.");
+        }
+      } else {
+        const result = await addToWishlist({
+          buyerId,
+          productId: product._id,
+          title: product.title,
+          image: product.images?.[0],
+          price: product.price,
+          category: product.category,
+        });
+        if (result?.error) {
+          toast.error(result.error);
+        } else {
+          setWishlisted(true);
+          toast.success("Added to wishlist!");
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong.");
+    } finally {
+      setWishlistLoading(false);
+    }
   };
 
   const handleBuyNow = () => {
@@ -22,10 +62,6 @@ export default function ProductDetails({ product }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <Link href={"/products"}  className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-white hover:opacity-80 transition">
-        <ArrowLeft width={18} height={18} />
-        Products page
-      </Link>
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <div>
           <div className="relative aspect-square w-full overflow-hidden rounded-3xl bg-background">
@@ -49,12 +85,7 @@ export default function ProductDetails({ product }) {
                     i === activeImage ? "border-accent" : "border-border"
                   }`}
                 >
-                  <Image
-                    src={img}
-                    alt={`${product.title} ${i + 1}`}
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src={img} alt={`${product.title} ${i + 1}`} fill className="object-cover" />
                 </button>
               ))}
             </div>
@@ -66,9 +97,7 @@ export default function ProductDetails({ product }) {
             {product.condition}
           </span>
 
-          <h1 className="mt-2 text-2xl font-bold text-foreground">
-            {product.title}
-          </h1>
+          <h1 className="mt-2 text-2xl font-bold text-foreground">{product.title}</h1>
           <p className="text-sm text-muted">{product.category}</p>
 
           <p className="mt-4 text-3xl font-bold text-foreground">
@@ -76,20 +105,14 @@ export default function ProductDetails({ product }) {
           </p>
 
           <Surface className="mt-6 rounded-2xl border border-border bg-surface p-4">
-            <h2 className="text-sm font-semibold text-foreground">
-              Description
-            </h2>
+            <h2 className="text-sm font-semibold text-foreground">Description</h2>
             <p className="mt-1 text-sm text-muted">{product.description}</p>
           </Surface>
 
           {product.sellerInfo && (
             <Surface className="mt-4 rounded-2xl border border-border bg-surface p-4">
-              <h2 className="text-sm font-semibold text-foreground">
-                Seller Information
-              </h2>
-              <p className="mt-1 text-sm text-foreground">
-                {product.sellerInfo.name}
-              </p>
+              <h2 className="text-sm font-semibold text-foreground">Seller Information</h2>
+              <p className="mt-1 text-sm text-foreground">{product.sellerInfo.name}</p>
               <p className="text-xs text-muted">{product.sellerInfo.email}</p>
               {product.sellerInfo.phone && (
                 <p className="text-xs text-muted">{product.sellerInfo.phone}</p>
@@ -110,10 +133,15 @@ export default function ProductDetails({ product }) {
             <Button
               variant="ghost"
               isIconOnly
-              aria-label="Add to wishlist"
+              aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              isDisabled={wishlistLoading}
               onPress={handleWishlist}
             >
-              <Heart width={18} height={18} />
+              {wishlisted ? (
+                <HeartFill width={18} height={18} className="text-danger" />
+              ) : (
+                <Heart width={18} height={18} />
+              )}
             </Button>
           </div>
         </div>

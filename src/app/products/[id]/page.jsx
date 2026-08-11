@@ -1,4 +1,7 @@
 import { getProductById } from "@/lib/api/product";
+import { getWishlist } from "@/lib/api/wishlist";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import ProductDetails from "@/components/products/ProductDetails";
 import { notFound } from "next/navigation";
 
@@ -17,7 +20,18 @@ const ProductDetailsPage = async ({ params }) => {
 
   if (!product) notFound();
 
-  return <ProductDetails product={product} />;
+  const session = await auth.api.getSession({ headers: await headers() });
+  const buyerId = session?.user?.id;
+
+  let isWishlisted = false;
+  if (buyerId) {
+    const wishlist = await getWishlist(buyerId);
+    isWishlisted = wishlist.some((item) => item.productId === id);
+  }
+
+  return (
+    <ProductDetails product={product} buyerId={buyerId} initialWishlisted={isWishlisted} />
+  );
 };
 
 export default ProductDetailsPage;
