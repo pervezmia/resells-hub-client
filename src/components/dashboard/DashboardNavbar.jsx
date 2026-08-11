@@ -1,14 +1,13 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { Bars, Briefcase, Bell, Xmark } from "@gravity-ui/icons";
+import { Bars, Briefcase, Bell, Xmark, ArrowLeft } from "@gravity-ui/icons";
 import { Avatar, Button, Drawer } from "@heroui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { sidebarLinks, bottomLinks } from "./sidebarLinks";
 import { Profile } from "../common/Profile";
-
 
 export default function DashboardNavbar() {
   const { data: session } = authClient.useSession();
@@ -33,6 +32,14 @@ export default function DashboardNavbar() {
         >
           <Bars />
         </Button>
+
+        <Link
+          href="/"
+          className="hidden items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-foreground md:flex"
+        >
+          <ArrowLeft width={16} height={16} />
+          Back to Site
+        </Link>
       </div>
 
       {/* ডান পাশে — icon + avatar, সবসময় visible */}
@@ -55,6 +62,16 @@ export default function DashboardNavbar() {
               </Drawer.Header>
               <Drawer.Body>
                 <nav className="flex flex-col gap-1">
+                  <Link
+                    href="/"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted hover:bg-accent-soft"
+                  >
+                    <ArrowLeft className="size-5" />
+                    Back to Site
+                  </Link>
+
+                  <div className="my-1 border-t border-border" />
                   {links.map((item) => {
                     const Icon = item.icon;
                     const isActive = pathname === item.href;

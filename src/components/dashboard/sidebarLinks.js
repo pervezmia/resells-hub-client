@@ -14,7 +14,7 @@ export const sidebarLinks = {
     { name: "My Orders", href: "/dashboard/buyer/orders", icon: ShoppingBag },
     { name: "Wishlist", href: "/dashboard/buyer/wishlist", icon: Bookmark },
     { name: "Cart", href: "/dashboard/buyer/cart", icon: ShoppingCart },
-    { name: "Support", href: "/dashboard/buyer/support", icon: LifeRing },
+    // { name: "Support", href: "/dashboard/buyer/support", icon: LifeRing },
     { name: "Payment History", href: "/dashboard/buyer/payment-history", icon: ClockArrowRotateLeft },
   ],
 

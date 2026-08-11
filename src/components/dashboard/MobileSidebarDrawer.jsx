@@ -2,7 +2,7 @@
 
 import { authClient } from "@/lib/auth-client";
 import { sidebarLinks, bottomLinks } from "./sidebarLinks";
-import { Bars } from "@gravity-ui/icons";
+import { ArrowLeft, Bars } from "@gravity-ui/icons";
 import { Button, Drawer } from "@heroui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -21,7 +21,11 @@ export default function MobileSidebarDrawer() {
 
   return (
     <Drawer isOpen={isOpen} onOpenChange={setIsOpen}>
-      <Button variant="secondary" onPress={() => setIsOpen(true)} className="md:hidden">
+      <Button
+        variant="secondary"
+        onPress={() => setIsOpen(true)}
+        className="md:hidden"
+      >
         <Bars />
         Menu
       </Button>
