@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Surface, Button } from "@heroui/react";
 import { CircleCheckFill } from "@gravity-ui/icons";
@@ -8,21 +8,23 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { authClient } from "@/lib/auth-client";
 import { completeCheckout } from "@/lib/actions/checkout";
+import { getPendingCheckout } from "@/lib/api/checkout";
 
-export default function PaymentSuccessPage() {
+function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const sessionId = searchParams.get("session_id");
+  const checkoutId = searchParams.get("checkout_id");
   const { clearCart } = useCart();
   const { data: session } = authClient.useSession();
 
   const [status, setStatus] = useState("verifying"); // verifying | success | error
   const [orderInfo, setOrderInfo] = useState(null);
-  const processedRef = useState({ current: false })[0];
+  const [processed, setProcessed] = useState(false);
 
   useEffect(() => {
-    if (!sessionId || processedRef.current) return;
-    processedRef.current = true;
+    if (!sessionId || processed) return;
+    setProcessed(true);
 
     const process = async () => {
       try {
@@ -34,21 +36,21 @@ export default function PaymentSuccessPage() {
           return;
         }
 
-        const { metadata, amountTotal, paymentIntentId } = verifyData;
-        const cartItems = JSON.parse(metadata.cartItems || "[]");
+        const pending = await getPendingCheckout(checkoutId);
+
+        if (!pending) {
+          setStatus("error");
+          return;
+        }
 
         const result = await completeCheckout({
-          buyerId: metadata.buyerId,
-          buyerName: metadata.deliveryName,
-          buyerEmail: session?.user?.email,
-          delivery: {
-            name: metadata.deliveryName,
-            phone: metadata.deliveryPhone,
-            address: metadata.deliveryAddress,
-          },
-          cartItems,
-          transactionId: paymentIntentId,
-          amount: cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0),
+          buyerId: pending.buyerId,
+          buyerName: pending.buyerName,
+          buyerEmail: pending.buyerEmail,
+          delivery: pending.delivery,
+          cartItems: pending.cartItems,
+          transactionId: verifyData.paymentIntentId,
+          amount: pending.amount,
         });
 
         if (result?.error) {
@@ -57,13 +59,13 @@ export default function PaymentSuccessPage() {
         }
 
         setOrderInfo({
-          transactionId: paymentIntentId,
+          transactionId: verifyData.paymentIntentId,
           date: new Date().toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "short",
             year: "numeric",
           }),
-          amount: cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0),
+          amount: pending.amount,
         });
         clearCart();
         setStatus("success");
@@ -74,7 +76,7 @@ export default function PaymentSuccessPage() {
     };
 
     process();
-  }, [sessionId]);
+  }, [sessionId, checkoutId, processed, clearCart]);
 
   if (status === "verifying") {
     return (
@@ -151,5 +153,19 @@ export default function PaymentSuccessPage() {
         </div>
       </Surface>
     </div>
+  );
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-lg px-4 py-16 text-center">
+          <p className="text-sm text-muted">Loading...</p>
+        </div>
+      }
+    >
+      <PaymentSuccessContent />
+    </Suspense>
   );
 }
