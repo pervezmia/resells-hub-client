@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Card, Chip } from '@heroui/react';
+import { Card, Chip, Table } from '@heroui/react';
 import { CircleDollar, ShoppingBag, Box, Clock } from '@gravity-ui/icons';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -42,25 +42,25 @@ export default function SellerAnalyticsClient({
   ];
 
   return (
-    <main className="w-full min-w-0 max-w-full overflow-x-hidden p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+    <main className="w-full max-w-full overflow-hidden p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       
       {/* Header */}
-      <header className="w-full min-w-0 border-b border-divider pb-3 sm:pb-5">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground tracking-tight truncate">
+      <header className="w-full border-b border-divider pb-3 sm:pb-5">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground tracking-tight break-words">
           Sales Analytics
         </h1>
-        <p className="text-xs sm:text-sm text-default-500 mt-1 truncate">
+        <p className="text-xs sm:text-sm text-default-500 mt-1 break-words">
           Real-time performance metrics and product insights for your store.
         </p>
       </header>
 
       {/* KPI Cards Section */}
-      <section aria-label="Key Performance Indicators" className="w-full min-w-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+      <section aria-label="Key Performance Indicators" className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
         {kpiData.map((item, index) => {
           const IconComponent = item.icon;
           return (
-            <Card key={index} shadow="sm" className="w-full min-w-0 border border-divider p-3.5 sm:p-4 overflow-hidden">
-              <div className="flex flex-row items-center justify-between gap-2.5 min-w-0">
+            <Card key={index} shadow="sm" className="w-full border border-divider p-3.5 sm:p-4">
+              <div className="flex flex-row items-center justify-between gap-2 w-full">
                 <div className="min-w-0 flex-1">
                   <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-default-500 truncate">
                     {item.title}
@@ -79,16 +79,16 @@ export default function SellerAnalyticsClient({
       </section>
 
       {/* Charts Section */}
-      <section aria-label="Analytics Charts" className="w-full min-w-0 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+      <section aria-label="Analytics Charts" className="w-full grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         
         {/* Revenue Area Chart */}
-        <Card shadow="sm" className="w-full min-w-0 lg:col-span-2 border border-divider p-3.5 sm:p-5 overflow-hidden">
-          <div className="flex flex-col items-start pb-3 min-w-0">
+        <Card shadow="sm" className="w-full min-w-0 lg:col-span-2 border border-divider p-3.5 sm:p-5">
+          <div className="flex flex-col items-start pb-3 w-full">
             <h3 className="text-base sm:text-lg font-bold text-foreground truncate w-full">Revenue Overview</h3>
             <p className="text-xs text-default-500 truncate w-full">Monthly earnings calculated from database</p>
           </div>
           <div className="h-[220px] sm:h-[300px] w-full min-w-0 relative">
-            <ResponsiveContainer width="99%" height="100%">
+            <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={monthlySalesData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
@@ -107,13 +107,13 @@ export default function SellerAnalyticsClient({
         </Card>
 
         {/* Category Bar Chart */}
-        <Card shadow="sm" className="w-full min-w-0 border border-divider p-3.5 sm:p-5 overflow-hidden">
-          <div className="flex flex-col items-start pb-3 min-w-0">
+        <Card shadow="sm" className="w-full min-w-0 border border-divider p-3.5 sm:p-5">
+          <div className="flex flex-col items-start pb-3 w-full">
             <h3 className="text-base sm:text-lg font-bold text-foreground truncate w-full">Category Share</h3>
             <p className="text-xs text-default-500 truncate w-full">Products distribution by category</p>
           </div>
           <div className="h-[220px] sm:h-[300px] w-full min-w-0 relative">
-            <ResponsiveContainer width="99%" height="100%">
+            <ResponsiveContainer width="100%" height="100%">
               <BarChart data={categorySalesData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="category" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} />
@@ -126,43 +126,46 @@ export default function SellerAnalyticsClient({
         </Card>
       </section>
 
-      {/* Top Products Table */}
-      <section aria-label="Top Selling Products" className="w-full min-w-0">
-        <Card shadow="sm" className="w-full min-w-0 border border-divider p-3.5 sm:p-5 overflow-hidden">
-          <div className="flex flex-col items-start pb-3 min-w-0">
+      {/* Top Products Table (HeroUI v3 Structure) */}
+      <section aria-label="Top Selling Products" className="w-full">
+        <Card shadow="sm" className="w-full border border-divider p-3.5 sm:p-5">
+          <div className="flex flex-col items-start pb-3 w-full">
             <h3 className="text-base sm:text-lg font-bold text-foreground">Listed Products</h3>
             <p className="text-xs text-default-500">Recent products fetched from database</p>
           </div>
-          <div className="w-full min-w-0 overflow-x-auto rounded-lg">
-            <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="bg-default-100 text-default-600 uppercase text-[10px] sm:text-[11px] tracking-wider">
-                <tr>
-                  <th className="p-2.5 sm:p-3 rounded-l-lg">Title</th>
-                  <th className="p-2.5 sm:p-3">Category</th>
-                  <th className="p-2.5 sm:p-3">Price</th>
-                  <th className="p-2.5 sm:p-3 rounded-r-lg">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-divider">
-                {topProducts.map((item) => (
-                  <tr key={item.id} className="hover:bg-default-100/50 transition-colors">
-                    <td className="p-2.5 sm:p-3 font-semibold text-foreground max-w-[120px] sm:max-w-xs truncate">
-                      {item.title}
-                    </td>
-                    <td className="p-2.5 sm:p-3 text-default-500 whitespace-nowrap">{item.category}</td>
-                    <td className="p-2.5 sm:p-3 font-medium text-foreground whitespace-nowrap">
-                      ৳ {item.price?.toLocaleString()}
-                    </td>
-                    <td className="p-2.5 sm:p-3 whitespace-nowrap">
-                      <Chip size="sm" color={item.status === 'sold' ? 'success' : 'warning'} variant="flat">
-                        {item.status || 'available'}
-                      </Chip>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+
+          <Table aria-label="Listed Products Table">
+            <Table.ScrollContainer>
+              <Table.Content className="min-w-[500px]">
+                <Table.Header>
+                  <Table.Column isRowHeader>TITLE</Table.Column>
+                  <Table.Column>CATEGORY</Table.Column>
+                  <Table.Column>PRICE</Table.Column>
+                  <Table.Column>STATUS</Table.Column>
+                </Table.Header>
+                <Table.Body emptyContent={"No products found"}>
+                  {topProducts.map((item) => (
+                    <Table.Row key={item.id}>
+                      <Table.Cell className="font-semibold text-foreground max-w-[150px] truncate">
+                        {item.title}
+                      </Table.Cell>
+                      <Table.Cell className="text-default-500 whitespace-nowrap">
+                        {item.category}
+                      </Table.Cell>
+                      <Table.Cell className="font-medium text-foreground whitespace-nowrap">
+                        ৳ {item.price?.toLocaleString()}
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <Chip size="sm" color={item.status === 'sold' ? 'success' : 'warning'} variant="flat">
+                          {item.status || 'available'}
+                        </Chip>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table.Content>
+            </Table.ScrollContainer>
+          </Table>
         </Card>
       </section>
 
