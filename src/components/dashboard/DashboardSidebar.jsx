@@ -10,6 +10,9 @@ export default function DashboardSidebar() {
   const role = session?.user?.role;
   const pathname = usePathname();
 
+  console.log(role
+    
+  );
   if (!role) return null;
 
   const links = sidebarLinks[role] || [];

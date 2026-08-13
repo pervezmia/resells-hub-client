@@ -51,3 +51,12 @@ export const updateProduct = async (id, updatedData) => {
   });
   return res.json();
 };
+
+export const updateProductApproval = async (id, approvalStatus) => {
+  const res = await fetch(`${baseUrl}/api/admin/products/${id}/approval`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ approvalStatus }),
+  });
+  return res.json();
+};

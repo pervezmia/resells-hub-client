@@ -13,7 +13,7 @@ export default function MobileSidebarDrawer() {
   const role = session?.user?.role;
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-
+console.log(role);
   if (!role) return null;
 
   const links = sidebarLinks[role] || [];

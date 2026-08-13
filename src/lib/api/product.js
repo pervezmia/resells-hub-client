@@ -58,3 +58,15 @@ export async function getCategoryCounts(categories) {
   );
   return counts;
 }
+
+export async function getAdminProducts(approvalStatus = "") {
+  const params = new URLSearchParams();
+  if (approvalStatus) params.set("approvalStatus", approvalStatus);
+
+  const res = await fetch(
+    `${baseUrl}/api/admin/products?${params.toString()}`,
+    { cache: "no-store" }
+  );
+  if (!res.ok) return [];
+  return res.json();
+}

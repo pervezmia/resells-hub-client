@@ -10,3 +10,24 @@ export async function getWishlist(buyerId) {
   if (!res.ok) return [];
   return res.json();
 }
+
+
+// User Delete API Call
+export async function deleteUserApi(userId) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`, {
+    method: "DELETE",
+  });
+  return res.json();
+}
+
+// User Role/Status Update API Call
+export async function updateUserRoleStatusApi(userId, data) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
