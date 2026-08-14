@@ -13,7 +13,7 @@ import {
   Select,
   ListBox,
 } from "@heroui/react";
-import { authClient, signOut } from "@/lib/auth-client";
+import { authClient, signIn, signOut } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 
 export default function RegisterPage() {
@@ -47,6 +47,13 @@ export default function RegisterPage() {
 
       router.refresh();
     }
+  };
+
+   const handleGoogleLogin = async () => {
+    await signIn.social({
+      provider: "google",
+      callbackURL: "/",
+    });
   };
 
   return (
@@ -133,7 +140,7 @@ export default function RegisterPage() {
           <div className="h-px flex-1 bg-border" />
         </div>
 
-        <Button variant="outline" className="w-full">
+        <Button onPress={handleGoogleLogin} variant="outline" className="w-full">
           Continue with Google
         </Button>
 

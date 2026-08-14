@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Form, TextField, Label, Input, FieldError, Button } from "@heroui/react";
-import { authClient } from "@/lib/auth-client";
+import { authClient, signIn } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 
 export default function LoginPage() {
@@ -36,6 +36,13 @@ export default function LoginPage() {
     }
 
   };
+
+  const handleGoogleLogin = async () => {
+    await signIn.social({
+    provider: "google",
+    callbackURL: "/",
+  });
+  }
 
 
   return (
@@ -78,7 +85,7 @@ export default function LoginPage() {
           <div className="h-px flex-1 bg-separator" />
         </div>
 
-        <Button variant="outline" className="w-full" >
+        <Button onPress={handleGoogleLogin} variant="outline" className="w-full" >
           Continue with Google
         </Button>
 
