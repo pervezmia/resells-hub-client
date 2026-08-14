@@ -1,2 +1,12 @@
 @import "tailwindcss";
 @import "@heroui/styles"; 
+
+
+@theme {
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--accent-foreground);
+  --color-primary-hover: var(--accent-hover);
+  --color-primary-soft: var(--accent-soft);
+  --color-primary-soft-foreground: var(--accent-soft-foreground);
+  --color-primary-soft-hover: var(--accent-soft-hover);
+}
