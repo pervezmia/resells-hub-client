@@ -33,7 +33,9 @@ export default function SuccessStories() {
 
         <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-3">
           {stories.map((story) => (
-            <Surface
+            <Surface data-aos="flip-left"
+     data-aos-easing="ease-out-cubic"
+     data-aos-duration="2000"
               key={story.name}
               className="rounded-3xl border border-border bg-background p-5"
             >

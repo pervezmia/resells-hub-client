@@ -35,7 +35,9 @@ export default function SustainabilityImpact() {
 
       <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
         {points.map(({ icon: Icon, title, description }) => (
-          <Surface
+          <Surface 
+           data-aos="zoom-in-right" 
+     data-aos-duration="800" 
             key={title}
             className="rounded-3xl border border-border bg-surface p-6"
           >

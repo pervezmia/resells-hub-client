@@ -28,7 +28,9 @@ export default function MarketplaceStats({ stats }) {
         ReSell Hub by the Numbers
       </h2>
 
-      <motion.div
+      <motion.div data-aos="zoom-in-up" 
+     data-aos-easing="ease-out-cubic"
+     data-aos-duration="800" 
         variants={container}
         initial="hidden"
         whileInView="show"

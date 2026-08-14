@@ -7,7 +7,7 @@ import { motion } from "motion/react";
 
 export default function HeroBanner() {
   return (
-    <section className="relative overflow-hidden bg-border-y border bg-surface px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
+    <section data-aos="fade-up" className="relative overflow-hidden bg-border-y border bg-surface px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
       {/* Decorative background glow */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/2 top-0 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-accent/10 blur-3xl" />

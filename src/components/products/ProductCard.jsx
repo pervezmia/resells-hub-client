@@ -12,7 +12,7 @@ const conditionStyles = {
 
 export default function ProductCard({ product }) {
   return (
-    <Surface className="group overflow-hidden rounded-3xl border border-border bg-surface transition-shadow hover:shadow-lg">
+    <Surface  data-aos="zoom-in-right" className="group overflow-hidden rounded-3xl border border-border bg-surface transition-shadow hover:shadow-lg">
       
         <div className="relative aspect-square w-full overflow-hidden bg-background">
           <Image
