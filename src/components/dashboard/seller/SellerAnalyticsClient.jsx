@@ -1,174 +1,196 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Card, Chip, Table } from '@heroui/react';
-import { CircleDollar, ShoppingBag, Box, Clock } from '@gravity-ui/icons';
-import { 
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar
-} from 'recharts';
+import { Surface } from "@heroui/react";
+import { Wallet, ShoppingBag, Box, Hourglass } from "@gravity-ui/icons";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+} from "recharts";
+
+const statusStyles = {
+  available: "bg-success-soft text-success",
+  sold: "bg-danger-soft text-danger",
+  pending: "bg-warning-soft text-warning",
+};
 
 export default function SellerAnalyticsClient({
   stats = {},
   categorySalesData = [],
   topProducts = [],
-  monthlySalesData = []
+  monthlySalesData = [],
 }) {
   const kpiData = [
     {
-      title: "TOTAL PRODUCTS",
+      title: "Total Products",
       value: stats?.totalProducts ?? 0,
       icon: Box,
-      iconBgClass: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
+      accent: "bg-accent-soft text-accent",
     },
     {
-      title: "TOTAL SALES",
+      title: "Total Sales",
       value: stats?.totalSales ?? 0,
       icon: ShoppingBag,
-      iconBgClass: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400",
+      accent: "bg-success-soft text-success",
     },
     {
-      title: "TOTAL REVENUE",
-      value: `৳ ${(stats?.totalRevenue ?? 0).toLocaleString()}`,
-      icon: CircleDollar,
-      iconBgClass: "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400",
+      title: "Total Revenue",
+      value: `৳${(stats?.totalRevenue ?? 0).toLocaleString()}`,
+      icon: Wallet,
+      accent: "bg-primary-soft text-primary",
     },
     {
-      title: "PENDING ORDERS",
+      title: "Pending Orders",
       value: stats?.pendingOrders ?? 0,
-      icon: Clock,
-      iconBgClass: "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400",
+      icon: Hourglass,
+      accent: "bg-warning-soft text-warning",
     },
   ];
 
   return (
-    <main className="w-full max-w-full overflow-hidden p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
-      
-      {/* Header */}
-      <header className="w-full border-b border-divider pb-3 sm:pb-5">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground tracking-tight break-words">
-          Sales Analytics
-        </h1>
-        <p className="text-xs sm:text-sm text-default-500 mt-1 break-words">
-          Real-time performance metrics and product insights for your store.
-        </p>
-      </header>
+    <div className="mx-auto max-w-6xl overflow-hidden px-4 py-8">
+      <h1 className="text-2xl font-bold text-foreground">Sales Analytics</h1>
+      <p className="mt-1 text-sm text-muted">
+        Real-time performance metrics and product insights for your store.
+      </p>
 
-      {/* KPI Cards Section */}
-      <section aria-label="Key Performance Indicators" className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-        {kpiData.map((item, index) => {
-          const IconComponent = item.icon;
-          return (
-            <Card key={index} shadow="sm" className="w-full border border-divider p-3.5 sm:p-4">
-              <div className="flex flex-row items-center justify-between gap-2 w-full">
-                <div className="min-w-0 flex-1">
-                  <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-default-500 truncate">
-                    {item.title}
-                  </p>
-                  <h2 className="text-base sm:text-2xl font-bold text-foreground mt-0.5 sm:mt-1 truncate">
-                    {item.value}
-                  </h2>
-                </div>
-                <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 ${item.iconBgClass}`}>
-                  <IconComponent className="size-5 sm:size-6" aria-label={item.title} role="img" />
-                </div>
-              </div>
-            </Card>
-          );
-        })}
-      </section>
+      {/* KPI Cards */}
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {kpiData.map(({ title, value, icon: Icon, accent }) => (
+          <Surface
+            key={title}
+            className="min-w-0 rounded-3xl border border-border bg-surface p-5"
+          >
+            <div
+              className={`flex h-10 w-10 items-center justify-center rounded-xl ${accent}`}
+            >
+              <Icon width={20} height={20} />
+            </div>
+            <p className="mt-4 text-2xl font-bold text-foreground">{value}</p>
+            <p className="mt-1 text-sm text-muted">{title}</p>
+          </Surface>
+        ))}
+      </div>
 
-      {/* Charts Section */}
-      <section aria-label="Analytics Charts" className="w-full grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        
-        {/* Revenue Area Chart */}
-        <Card shadow="sm" className="w-full min-w-0 lg:col-span-2 border border-divider p-3.5 sm:p-5">
-          <div className="flex flex-col items-start pb-3 w-full">
-            <h3 className="text-base sm:text-lg font-bold text-foreground truncate w-full">Revenue Overview</h3>
-            <p className="text-xs text-default-500 truncate w-full">Monthly earnings calculated from database</p>
-          </div>
-          <div className="h-[220px] sm:h-[300px] w-full min-w-0 relative">
+      {/* Charts */}
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <Surface className="min-w-0 rounded-3xl border border-border bg-surface p-5 lg:col-span-2">
+          <h2 className="font-semibold text-foreground">Monthly Sales Trend</h2>
+          <p className="text-xs text-muted">
+            Revenue from paid orders over the last 6 months
+          </p>
+
+          <div className="mt-4 h-64 w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={monthlySalesData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart data={monthlySalesData}>
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                    <stop
+                      offset="5%"
+                      stopColor="var(--accent)"
+                      stopOpacity={0.4}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="var(--accent)"
+                      stopOpacity={0}
+                    />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="month" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
-                <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
-                <Tooltip formatter={(val) => [`৳ ${(val ?? 0).toLocaleString()}`, 'Revenue']} />
-                <Area type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={2.5} fillOpacity={1} fill="url(#colorRevenue)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="month" stroke="var(--muted)" fontSize={12} />
+                <YAxis stroke="var(--muted)" fontSize={12} />
+                <Tooltip
+                  formatter={(val) => [
+                    `৳${(val ?? 0).toLocaleString()}`,
+                    "Revenue",
+                  ]}
+                  contentStyle={{
+                    backgroundColor: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "12px",
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="var(--accent)"
+                  strokeWidth={2.5}
+                  fillOpacity={1}
+                  fill="url(#colorRevenue)"
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
-        </Card>
+        </Surface>
 
-        {/* Category Bar Chart */}
-        <Card shadow="sm" className="w-full min-w-0 border border-divider p-3.5 sm:p-5">
-          <div className="flex flex-col items-start pb-3 w-full">
-            <h3 className="text-base sm:text-lg font-bold text-foreground truncate w-full">Category Share</h3>
-            <p className="text-xs text-default-500 truncate w-full">Products distribution by category</p>
-          </div>
-          <div className="h-[220px] sm:h-[300px] w-full min-w-0 relative">
+        <Surface className="min-w-0 rounded-3xl border border-border bg-surface p-5">
+          <h2 className="font-semibold text-foreground">Revenue by Category</h2>
+          <p className="text-xs text-muted">From paid orders</p>
+
+          <div className="mt-4 h-64 w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={categorySalesData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="category" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} />
-                <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
-                <Tooltip />
-                <Bar dataKey="sales" fill="#10b981" radius={[4, 4, 0, 0]} />
+              <BarChart data={categorySalesData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="category" stroke="var(--muted)" fontSize={10} />
+                <YAxis stroke="var(--muted)" fontSize={12} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "12px",
+                  }}
+                />
+                <Bar
+                  dataKey="sales"
+                  fill="var(--success)"
+                  radius={[6, 6, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </Card>
-      </section>
+        </Surface>
+      </div>
 
-      {/* Top Products Table (HeroUI v3 Structure) */}
-      <section aria-label="Top Selling Products" className="w-full">
-        <Card shadow="sm" className="w-full border border-divider p-3.5 sm:p-5">
-          <div className="flex flex-col items-start pb-3 w-full">
-            <h3 className="text-base sm:text-lg font-bold text-foreground">Listed Products</h3>
-            <p className="text-xs text-default-500">Recent products fetched from database</p>
+      {/* Top Selling Products */}
+      <Surface className="mt-6 min-w-0 rounded-3xl border border-border bg-surface p-5">
+        <h2 className="font-semibold text-foreground">Top Selling Products</h2>
+        <p className="text-xs text-muted">
+          Ranked by units sold from paid orders
+        </p>
+
+        {!topProducts.length ? (
+          <p className="mt-6 text-sm text-muted">No sales yet.</p>
+        ) : (
+          <div className="mt-4 space-y-3">
+            {topProducts.map((product) => (
+              <div
+                key={product.id}
+                className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-background p-3"
+              >
+                <div className="min-w-0">
+                  <p className="truncate font-medium text-foreground">
+                    {product.title}
+                  </p>
+                  <p className="text-xs text-muted">{product.category}</p>
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className="font-semibold text-foreground">
+                    ৳{product.price?.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-muted">{product.unitsSold} sold</p>
+                </div>
+              </div>
+            ))}
           </div>
-
-          <Table aria-label="Listed Products Table">
-            <Table.ScrollContainer>
-              <Table.Content className="min-w-[500px]">
-                <Table.Header>
-                  <Table.Column isRowHeader>TITLE</Table.Column>
-                  <Table.Column>CATEGORY</Table.Column>
-                  <Table.Column>PRICE</Table.Column>
-                  <Table.Column>STATUS</Table.Column>
-                </Table.Header>
-                <Table.Body emptyContent={"No products found"}>
-                  {topProducts.map((item) => (
-                    <Table.Row key={item.id}>
-                      <Table.Cell className="font-semibold text-foreground max-w-[150px] truncate">
-                        {item.title}
-                      </Table.Cell>
-                      <Table.Cell className="text-default-500 whitespace-nowrap">
-                        {item.category}
-                      </Table.Cell>
-                      <Table.Cell className="font-medium text-foreground whitespace-nowrap">
-                        ৳ {item.price?.toLocaleString()}
-                      </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap">
-                        <Chip size="sm" color={item.status === 'sold' ? 'success' : 'warning'} variant="flat">
-                          {item.status || 'available'}
-                        </Chip>
-                      </Table.Cell>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table.Content>
-            </Table.ScrollContainer>
-          </Table>
-        </Card>
-      </section>
-
-    </main>
+        )}
+      </Surface>
+    </div>
   );
 }
