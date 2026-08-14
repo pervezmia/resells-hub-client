@@ -169,7 +169,8 @@ export default function Navbar() {
             <li className="mt-2 flex flex-col gap-3 border-t border-separator pt-4">
               {user ? (
                 <>
-                  <Dropdown>
+                <Profile></Profile>
+                  {/* <Dropdown>
                     <Dropdown.Trigger className="rounded-full">
                       <Avatar>
                         <Avatar.Image
@@ -230,7 +231,7 @@ export default function Navbar() {
                         </Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown.Popover>
-                  </Dropdown>
+                  </Dropdown> */}
 
                   {/* <Link
                     href="/profile"

@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { sidebarLinks, bottomLinks } from "./sidebarLinks";
 import { Profile } from "../common/Profile";
+import { ThemeSwitcher } from "../ThemeSwitcher";
 
 export default function DashboardNavbar() {
   const { data: session } = authClient.useSession();
@@ -44,8 +45,11 @@ export default function DashboardNavbar() {
 
       {/* ডান পাশে — icon + avatar, সবসময় visible */}
       <div className="flex items-center gap-4">
-        <Briefcase className="size-5 text-foreground" />
-        <Bell className="size-5 text-foreground" />
+        {/* <Briefcase className="size-5 text-foreground" />
+        <Bell className="size-5 text-foreground" /> */}
+        <div className="flex items-center gap-2">
+          <ThemeSwitcher />
+        </div>
         <Profile />
       </div>
 
