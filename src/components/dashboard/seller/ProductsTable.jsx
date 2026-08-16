@@ -7,6 +7,7 @@ import { useState } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { deleteProduct } from "@/lib/actions/product";
+import { getSafeImage } from "@/lib/utils";
 
 const statusStyles = {
   available: "bg-success-soft text-success",
@@ -75,7 +76,7 @@ export default function ProductsTable({ products = [] }) {
                     <div className="flex items-center gap-3">
                       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-background">
                         <Image
-                          src={product.images?.[0]}
+                          src={getSafeImage(product.images?.[0])}
                           alt={product.title}
                           fill
                           sizes="40px"

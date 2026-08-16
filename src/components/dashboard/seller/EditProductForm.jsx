@@ -24,6 +24,18 @@ export default function EditProductForm({ product }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const isValidImageUrl = (url) => {
+    return (
+      url?.startsWith("/") ||
+      url?.startsWith("http://") ||
+      url?.startsWith("https://")
+    );
+  };
+
+  if (!isValidImageUrl(imageUrl)) {
+    toast.error("সঠিক image URL দিন (http/https দিয়ে শুরু হতে হবে)");
+    return;
+  }
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +72,9 @@ export default function EditProductForm({ product }) {
       }
     } catch (err) {
       console.error(err);
-      setError("Something went wrong while updating the product. Please try again.");
+      setError(
+        "Something went wrong while updating the product. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -77,7 +91,12 @@ export default function EditProductForm({ product }) {
         <Form onSubmit={onSubmit}>
           <Fieldset className="w-full">
             <Fieldset.Group className="gap-4">
-              <TextField isRequired name="title" minLength={5} defaultValue={product.title}>
+              <TextField
+                isRequired
+                name="title"
+                minLength={5}
+                defaultValue={product.title}
+              >
                 <Label>Product Title</Label>
                 <Input variant="secondary" />
                 <Description>Be specific — brand, model, key spec</Description>
@@ -140,7 +159,8 @@ export default function EditProductForm({ product }) {
                   min={0}
                   defaultValue={String(product.price)}
                   validate={(value) => {
-                    if (Number(value) <= 0) return "Price must be greater than 0";
+                    if (Number(value) <= 0)
+                      return "Price must be greater than 0";
                     return null;
                   }}
                 >
@@ -162,17 +182,30 @@ export default function EditProductForm({ product }) {
                 </TextField>
               </div>
 
-              <TextField isRequired name="images" defaultValue={product.images?.join(", ")}>
+              <TextField
+                isRequired
+                name="images"
+                defaultValue={product.images?.join(", ")}
+              >
                 <Label>Image URLs</Label>
                 <Input variant="secondary" />
-                <Description>Paste one or more image URLs, separated by commas</Description>
+                <Description>
+                  Paste one or more image URLs, separated by commas
+                </Description>
                 <FieldError />
               </TextField>
 
-              <TextField isRequired name="description" minLength={20} defaultValue={product.description}>
+              <TextField
+                isRequired
+                name="description"
+                minLength={20}
+                defaultValue={product.description}
+              >
                 <Label>Description</Label>
                 <TextArea variant="secondary" rows={4} />
-                <Description>Include specs, age, and any known issues</Description>
+                <Description>
+                  Include specs, age, and any known issues
+                </Description>
                 <FieldError />
               </TextField>
             </Fieldset.Group>

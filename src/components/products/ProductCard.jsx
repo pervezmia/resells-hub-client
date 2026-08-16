@@ -1,6 +1,7 @@
 import { Surface, Button } from "@heroui/react";
 import Link from "next/link";
 import Image from "next/image";
+import { getSafeImage } from "@/lib/utils";
 
 const conditionStyles = {
   New: "bg-success-soft text-success",
@@ -16,7 +17,7 @@ export default function ProductCard({ product }) {
       
         <div className="relative aspect-square w-full overflow-hidden bg-background">
           <Image
-            src={product.images?.[0]}
+            src={getSafeImage(product.images?.[0])}
             alt={product.title}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"

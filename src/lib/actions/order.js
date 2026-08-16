@@ -1,8 +1,9 @@
 "use server";
 
+
 export async function updateOrderStatus(orderId, orderStatus) {
   try {
-    const res = await fetch(
+    const res = await fetch(  
       `${process.env.NEXT_PUBLIC_API_URL}/api/orders/${orderId}`,
       {
         method: "PATCH",
@@ -27,6 +28,8 @@ export async function updateOrderStatus(orderId, orderStatus) {
 
 export async function cancelOrder(orderId) {
   try {
+
+
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/orders/${orderId}`,
       {

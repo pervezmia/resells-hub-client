@@ -1,8 +1,10 @@
 "use server";
 
+
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export async function addToWishlist(payload) {
+
   try {
     const res = await fetch(`${baseUrl}/api/wishlist`, {
       method: "POST",
@@ -18,6 +20,7 @@ export async function addToWishlist(payload) {
 }
 
 export async function removeFromWishlist(buyerId, productId) {
+
   try {
     const res = await fetch(
       `${baseUrl}/api/wishlist?buyerId=${buyerId}&productId=${productId}`,

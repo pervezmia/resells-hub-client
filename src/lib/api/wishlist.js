@@ -1,3 +1,5 @@
+import { authHeader } from "../core/server";
+
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export async function getWishlist(buyerId) {
@@ -26,6 +28,7 @@ export async function updateUserRoleStatusApi(userId, data) {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
+      headers: await authHeader()
     },
     body: JSON.stringify(data),
   });

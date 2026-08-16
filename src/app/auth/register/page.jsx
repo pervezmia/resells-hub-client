@@ -35,7 +35,6 @@ export default function RegisterPage() {
 
     const { data, error } = await authClient.signUp.email({
       ...user,
-      role: "user"
     });
     if (error) {
       toast.error(error.message || "Register failed!");

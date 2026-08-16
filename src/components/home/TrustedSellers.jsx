@@ -34,7 +34,7 @@ export default async function TrustedSellers() {
 
         <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {topSellers.map((seller) => (
-            <Surface
+            <Surface data-aos="zoom-in-right" 
               key={seller._id}
               className="flex flex-col items-center rounded-3xl border border-border bg-background p-6 text-center"
             >
