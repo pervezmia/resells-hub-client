@@ -20,11 +20,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-export default function AddProductForm() {
+export default function  AddProductForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  
   const onSubmit = async (e) => {
     e.preventDefault();
     const form = e.currentTarget;

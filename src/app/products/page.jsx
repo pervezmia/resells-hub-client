@@ -8,8 +8,11 @@ export const metadata = {
   description: "Browse pre-owned products available on ReSell Hub — search, filter, and sort to find what you need.",
 };
 
+
+
 const AllProductsPage = async ({ searchParams }) => {
   const params = await searchParams;
+
 
   const { products, totalCount, totalPages, currentPage } = await getAllProducts({
     search: params?.search,

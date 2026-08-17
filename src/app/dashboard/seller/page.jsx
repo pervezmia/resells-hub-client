@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getProducts } from "@/lib/api/product";
+import { getSellerOrders } from "@/lib/api/order";
 import DashboardStats from "@/components/dashboard/seller/DashboardStats";
 
 export const metadata = {
@@ -10,15 +11,23 @@ export const metadata = {
 
 const SellerDashboard = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
-  const products = await getProducts(session?.user?.id);
+  const sellerId = session?.user?.id;
+
+  const [products, orders] = await Promise.all([
+    getProducts(sellerId),
+    getSellerOrders(sellerId),
+  ]);
 
   const totalProducts = products?.length || 0;
-  const soldProducts = products?.filter((p) => p.status === "sold") || [];
-  const totalSales = soldProducts.length;
-  const totalRevenue = soldProducts.reduce((sum, p) => sum + (p.price || 0), 0);
-  // NOTE: pendingOrders will come from the Orders API once it's built.
-  // Using product status as a stand-in for now.
-  const pendingOrders = products?.filter((p) => p.status === "pending").length || 0;
+
+  const deliveredOrders = orders?.filter((o) => o.orderStatus === "delivered") || [];
+  const totalSales = deliveredOrders.length;
+  const totalRevenue = deliveredOrders.reduce((sum, o) => sum + (o.price || 0), 0);
+
+  const pendingOrders =
+    orders?.filter(
+      (o) => o.orderStatus !== "delivered" && o.orderStatus !== "rejected"
+    ).length || 0;
 
   const firstName = session?.user?.name?.split(" ")[0] || "Seller";
 

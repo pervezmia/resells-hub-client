@@ -12,9 +12,12 @@ const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 export const getProducts = async (sellerId) => {
   const params = new URLSearchParams();
   if (sellerId) params.set("sellerId", sellerId);
+  
 
   const res = await fetch(`${baseUrl}/api/product?${params.toString()}`);
-  return res.json();
+  const data = await res.json();
+  
+  return Array.isArray(data) ? data : data?.products || [];
 };
  
 

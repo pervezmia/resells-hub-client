@@ -33,7 +33,7 @@ export const sidebarLinks = {
     { name: "Manage Users", href: "/dashboard/admin/manage-users", icon: MdOutlinePeople },
     { name: "Manage Products", href: "/dashboard/admin/manage-products", icon: MdOutlineInventory2 },
     { name: "Manage Orders", href: "/dashboard/admin/manage-orders", icon: MdOutlineListAlt },
-    // { name: "Analytics", href: "/dashboard/admin/analytics", icon: MdOutlineBarChart },
+    { name: "Analytics", href: "/dashboard/admin/analytics", icon: MdOutlineBarChart },
   ],
 };
 
