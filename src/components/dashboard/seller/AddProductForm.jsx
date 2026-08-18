@@ -2,6 +2,7 @@
 
 import { createProduct } from "@/lib/actions/product";
 import { PRODUCT_CATEGORIES, PRODUCT_CONDITIONS } from "@/lib/constants";
+import { getSafeImage } from "@/lib/utils";
 import {
   Button,
   Description,
@@ -20,11 +21,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-export default function  AddProductForm() {
+export default function AddProductForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  
+
   const onSubmit = async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -34,7 +35,7 @@ export default function  AddProductForm() {
     const formData = new FormData(form);
     const raw = Object.fromEntries(formData.entries());
 
-    const images = raw.images
+    const images = getSafeImage(raw.images)
       .split(",")
       .map((url) => url.trim())
       .filter(Boolean);
@@ -61,7 +62,9 @@ export default function  AddProductForm() {
       }
     } catch (err) {
       console.error(err);
-      setError("Something went wrong while adding the product. Please try again.");
+      setError(
+        "Something went wrong while adding the product. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -80,13 +83,20 @@ export default function  AddProductForm() {
             <Fieldset.Group className="gap-4">
               <TextField isRequired name="title" minLength={5}>
                 <Label>Product Title</Label>
-                <Input placeholder="Used Dell Inspiron 15 Laptop" variant="secondary" />
+                <Input
+                  placeholder="Used Dell Inspiron 15 Laptop"
+                  variant="secondary"
+                />
                 <Description>Be specific — brand, model, key spec</Description>
                 <FieldError />
               </TextField>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Select isRequired name="category" placeholder="Select category">
+                <Select
+                  isRequired
+                  name="category"
+                  placeholder="Select category"
+                >
                   <Label>Category</Label>
                   <Select.Trigger>
                     <Select.Value />
@@ -104,7 +114,11 @@ export default function  AddProductForm() {
                   </Select.Popover>
                 </Select>
 
-                <Select isRequired name="condition" placeholder="Select condition">
+                <Select
+                  isRequired
+                  name="condition"
+                  placeholder="Select condition"
+                >
                   <Label>Condition</Label>
                   <Select.Trigger>
                     <Select.Value />
@@ -130,7 +144,8 @@ export default function  AddProductForm() {
                   type="number"
                   min={0}
                   validate={(value) => {
-                    if (Number(value) <= 0) return "Price must be greater than 0";
+                    if (Number(value) <= 0)
+                      return "Price must be greater than 0";
                     return null;
                   }}
                 >
@@ -139,20 +154,61 @@ export default function  AddProductForm() {
                   <FieldError />
                 </TextField>
 
-                <TextField isRequired name="stock" type="number" min={1} defaultValue="1">
+                <TextField
+                  isRequired
+                  name="stock"
+                  type="number"
+                  min={1}
+                  defaultValue="1"
+                >
                   <Label>Stock Quantity</Label>
                   <Input placeholder="1" variant="secondary" />
                   <FieldError />
                 </TextField>
               </div>
 
-              <TextField isRequired name="images">
+              <TextField
+                isRequired
+                name="images"
+                validate={(value) => {
+                  // ১. ইনপুট ট্রিম করা এবং খালি আছে কি না চেক করা
+                  if (!value || !value.trim()) {
+                    return "At least one image URL is required";
+                  }
+
+                  // ২. কমা দিয়ে আলাদা করে প্রতিটি URL ট্রিমিং ও ফিল্টার করা
+                  const urls = value
+                    .split(",")
+                    .map((url) => url.trim())
+                    .filter(Boolean);
+
+                  if (urls.length === 0) {
+                    return "At least one image URL is required";
+                  }
+
+                  // ৩. ভুল URL ফরম্যাট বের করা (http://, https://, বা / দিয়ে শুরু হতে হবে)
+                  const invalidUrl = urls.find(
+                    (url) =>
+                      !url.startsWith("http://") &&
+                      !url.startsWith("https://") &&
+                      !url.startsWith("/"),
+                  );
+
+                  if (invalidUrl) {
+                    return `Invalid URL: "${invalidUrl}" — must start with http://, https://, or /`;
+                  }
+
+                  return null; // কোনো ভুল না থাকলে null রিটার্ন করবে
+                }}
+              >
                 <Label>Image URLs</Label>
                 <Input
                   placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg"
                   variant="secondary"
                 />
-                <Description>Paste one or more image URLs, separated by commas</Description>
+                <Description>
+                  Paste one or more image URLs, separated by commas
+                </Description>
                 <FieldError />
               </TextField>
 
@@ -163,7 +219,9 @@ export default function  AddProductForm() {
                   variant="secondary"
                   rows={4}
                 />
-                <Description>Include specs, age, and any known issues</Description>
+                <Description>
+                  Include specs, age, and any known issues
+                </Description>
                 <FieldError />
               </TextField>
             </Fieldset.Group>

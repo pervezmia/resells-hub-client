@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { addToWishlist, removeFromWishlist } from "@/lib/actions/wishlist";
 import { useCart } from "@/context/CartContext";
+import { getSafeImage } from "@/lib/utils";
 
 export default function ProductDetails({
   product,
@@ -51,7 +52,7 @@ export default function ProductDetails({
           buyerId,
           productId: product._id,
           title: product.title,
-          image: product.images?.[0],
+          image: getSafeImage(product.images?.[0]),
           price: product.price,
           category: product.category,
         });
@@ -95,7 +96,7 @@ export default function ProductDetails({
         <div>
           <div className="relative aspect-square w-full overflow-hidden rounded-3xl bg-background">
             <Image
-              src={product.images?.[activeImage]}
+              src={getSafeImage(product.images?.[activeImage])}
               alt={product.title}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
