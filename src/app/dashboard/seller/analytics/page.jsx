@@ -25,7 +25,9 @@ function buildMonthlyRevenue(orders) {
   }
 
   orders
-    .filter((o) => o.paymentStatus === "paid")
+    .filter((o) => o.paymentStatus === "paid" &&
+        o.orderStatus !== "rejected" &&
+        o.orderStatus !== "cancelled")
     .forEach((order) => {
       if (!order.createdAt) return;
       const d = new Date(order.createdAt);
@@ -48,7 +50,7 @@ export default async function SellerAnalyticsPage() {
   const categoryMap = new Map(products.map((p) => [p._id, p.category]));
 
   // ১. Overview KPI — এখন সত্যিকারের Orders API থেকে (পুরনো product.status hack বাদ)
-  const paidOrders = orders.filter((o) => o.paymentStatus === "paid");
+  const paidOrders = orders.filter((o) => o.paymentStatus === "paid" && o.orderStatus !== "rejected" && o.orderStatus !== "cancelled");
   const totalProducts = products.length;
   const totalSales = paidOrders.length;
   const totalRevenue = paidOrders.reduce(
