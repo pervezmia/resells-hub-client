@@ -23,7 +23,7 @@ function PaymentSuccessContent() {
   const [processed, setProcessed] = useState(false);
 
   useEffect(() => {
-    if (!sessionId || processed) return;
+    if (!sessionId || processed || !session) return;
     setProcessed(true);
 
     const process = async () => {
@@ -36,7 +36,7 @@ function PaymentSuccessContent() {
           return;
         }
 
-        const pending = await getPendingCheckout(checkoutId);
+        const pending = await getPendingCheckout(checkoutId, session?.session?.token);
 
         if (!pending) {
           setStatus("error");
@@ -76,7 +76,7 @@ function PaymentSuccessContent() {
     };
 
     process();
-  }, [sessionId, checkoutId, processed, clearCart]);
+  }, [sessionId, checkoutId, processed, session, clearCart]);
 
   if (status === "verifying") {
     return (

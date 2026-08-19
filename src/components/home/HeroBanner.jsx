@@ -47,9 +47,9 @@ export default function HeroBanner() {
               <ArrowRight />
             </Button>
           </Link>
-          <Link href="/dashboard/seller/add-product" className="w-full sm:w-auto">
+          <Link href="/dashboard" className="w-full sm:w-auto">
             <Button variant="secondary" className="w-full sm:w-auto">
-              Sell Your Item
+              See Your Overview
             </Button>
           </Link>
         </motion.div>
