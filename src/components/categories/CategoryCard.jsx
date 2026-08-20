@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function CategoryCard({ category }) {
   const { name, count, icon: Icon } = category;
-
+  
   return (
     <Link href={`/products?category=${encodeURIComponent(name)}`}>
       <Surface className="group flex flex-col items-center gap-3 rounded-3xl border border-border bg-surface p-6 text-center transition-shadow hover:shadow-lg">
