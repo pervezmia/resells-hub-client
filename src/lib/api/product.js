@@ -1,3 +1,4 @@
+import { getTokenServer } from "../getTokenServer";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -74,13 +75,19 @@ export async function getCategoryCounts(categories) {
   return counts;
 }
 
-export async function getAdminProducts(approvalStatus = "") {
+export async function getAdminProducts(approvalStatus = "",  search = "") {
   const params = new URLSearchParams();
   if (approvalStatus) params.set("approvalStatus", approvalStatus);
+   if (search) params.set("search", search);
+
+  const token = await getTokenServer();
 
   const res = await fetch(
     `${baseUrl}/api/admin/products?${params.toString()}`,
-    { cache: "no-store" }
+    { cache: "no-store",
+      headers: {authorization: `Bearer ${token}`}
+     },
+    
   );
   if (!res.ok) return [];
   return res.json();

@@ -1,7 +1,7 @@
 "use client";
 
-import { Table, Button, AlertDialog, Input } from "@heroui/react";
-import { TrashBin, Magnifier } from "@gravity-ui/icons";
+import { Table, Button, AlertDialog, Input, Select, ListBox } from "@heroui/react";
+import { TrashBin, Magnifier, Xmark } from "@gravity-ui/icons";
 import { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
@@ -14,6 +14,13 @@ const roleStyles = {
   admin: "bg-warning-soft text-warning",
 };
 
+const roleFilterOptions = [
+  { id: "", label: "All Roles" },
+  { id: "buyer", label: "Buyer" },
+  { id: "seller", label: "Seller" },
+  { id: "admin", label: "Admin" },
+];
+
 export default function UsersTable({ users = [] }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -25,12 +32,27 @@ export default function UsersTable({ users = [] }) {
   const [updatingId, setUpdatingId] = useState(null);
   const [targetUser, setTargetUser] = useState(null);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
+  const updateParams = (updates) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (search) params.set("search", search);
-    else params.delete("search");
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    });
     router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const handleRoleFilterChange = (key) => {
+    updateParams({ role: key });
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    updateParams({ search });
+  };
+
+  const handleClearSearch = () => {
+    setSearch("");
+    updateParams({ search: "" });
   };
 
   const handleToggleStatus = async (user) => {
@@ -41,9 +63,7 @@ export default function UsersTable({ users = [] }) {
       if (result?.error) {
         toast.error(result.error);
       } else {
-        toast.success(
-          newStatus === "blocked" ? "User blocked." : "User unblocked."
-        );
+        toast.success(newStatus === "blocked" ? "User blocked." : "User unblocked.");
         router.refresh();
       }
     } catch (err) {
@@ -76,33 +96,71 @@ export default function UsersTable({ users = [] }) {
 
   return (
     <>
-      <form onSubmit={handleSearch} className="mb-4">
-        <div className="relative max-w-sm">
-          <Magnifier
-            width={16}
-            height={16}
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
-          />
-          <Input
-            aria-label="Search users by name or email"
-            variant="secondary"
-            placeholder="Search by name or email..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 pr-12"
-          />
-          <Button
-            type="submit"
-            variant="ghost"
-            size="sm"
-            isIconOnly
-            aria-label="Search"
-            className="absolute right-1.5 top-1/2 -translate-y-1/2"
-          >
-            <Magnifier width={16} height={16} />
-          </Button>
-        </div>
-      </form>
+      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <Select
+          aria-label="Filter by role"
+          placeholder="Filter"
+          selectedKey={searchParams.get("role") || ""}
+          onSelectionChange={handleRoleFilterChange}
+          className="w-full md:w-56"
+        >
+          <Select.Trigger>
+            <Select.Value />
+            <Select.Indicator />
+          </Select.Trigger>
+          <Select.Popover>
+            <ListBox>
+              {roleFilterOptions.map((opt) => (
+                <ListBox.Item key={opt.id} id={opt.id} textValue={opt.label}>
+                  {opt.label}
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+              ))}
+            </ListBox>
+          </Select.Popover>
+        </Select>
+
+        <form onSubmit={handleSearchSubmit} className="w-full md:w-72">
+          <div className="relative">
+            <Magnifier
+              width={16}
+              height={16}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+            />
+            <Input
+              aria-label="Search users by name or email"
+              variant="secondary"
+              placeholder="Search by name or email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className={search ? "pl-9 pr-20" : "pl-9 pr-12"}
+            />
+            {search && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                isIconOnly
+                aria-label="Clear search"
+                className="absolute right-9 top-1/2 -translate-y-1/2"
+                onPress={handleClearSearch}
+              >
+                <Xmark width={14} height={14} />
+              </Button>
+            )}
+            <Button
+              type="submit"
+              variant="ghost"
+              size="sm"
+              isIconOnly
+              aria-label="Search"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2"
+            >
+              <Magnifier width={16} height={16} />
+            </Button>
+          </div>
+        </form>
+      </div>
 
       {!users.length ? (
         <div className="rounded-3xl border border-border bg-surface p-10 text-center">
@@ -122,20 +180,15 @@ export default function UsersTable({ users = [] }) {
               <Table.Body>
                 {users.map((user) => {
                   const isSelf = user._id === currentUserId;
-
                   return (
                     <Table.Row key={user._id}>
                       <Table.Cell>
                         <span className="font-medium text-foreground">
                           {user.name}
-                          {isSelf && (
-                            <span className="ml-2 text-xs text-muted">(You)</span>
-                          )}
+                          {isSelf && <span className="ml-2 text-xs text-muted">(You)</span>}
                         </span>
                       </Table.Cell>
-                      <Table.Cell className="text-sm text-muted">
-                        {user.email}
-                      </Table.Cell>
+                      <Table.Cell className="text-sm text-muted">{user.email}</Table.Cell>
                       <Table.Cell>
                         <span
                           className={`rounded-full px-2.5 py-1 text-xs font-medium capitalize ${

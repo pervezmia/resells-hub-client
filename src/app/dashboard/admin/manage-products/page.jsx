@@ -8,7 +8,7 @@ export const metadata = {
 
 const ManageProducts = async ({ searchParams }) => {
   const params = await searchParams;
-  const products = await getAdminProducts(params?.approvalStatus);
+  const products = await getAdminProducts(params?.approvalStatus, params?.search);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">

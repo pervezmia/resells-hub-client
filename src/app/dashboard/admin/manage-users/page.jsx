@@ -8,7 +8,7 @@ export const metadata = {
 
 const ManageUsers = async ({ searchParams }) => {
   const params = await searchParams;
-  const users = await getAllUsers(params?.search);
+  const users = await getAllUsers(params?.search , params?.role);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">

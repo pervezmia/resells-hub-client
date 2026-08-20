@@ -1,9 +1,9 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { getAllUsers } from "@/lib/api/user";
 import { getAdminProducts } from "@/lib/api/product";
-import { getAllOrders } from "@/lib/api/order";
 import AdminDashboardStats from "@/components/dashboard/admin/DashboardStats";
+import { getAllUsers } from "@/lib/api/user";
+import { getAllOrders } from "@/lib/api/order";
 
 export const metadata = {
   title: "Admin Dashboard | ReSell Hub",
@@ -16,7 +16,8 @@ const AdminDashboard = async () => {
   const [users, products, orders] = await Promise.all([
     getAllUsers(),
     getAdminProducts(),
-    getAllOrders(),
+    // getAllOrders(),
+    getAllOrders()
   ]);
 
   const totalUsers = users?.length || 0;

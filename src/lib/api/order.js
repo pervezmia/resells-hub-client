@@ -27,8 +27,13 @@ export async function getBuyerOrders(buyerId) {
 }
 
 //get all orders
-export async function getAllOrders() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
+export async function getAllOrders(status = "", search = "") {
+
+  const params = new URLSearchParams();
+  if (status) params.set("status", status);
+  if (search) params.set("search", search);
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders?${params.toString()}`, {
     cache: "no-store",
   });
   if (!res.ok) return [];

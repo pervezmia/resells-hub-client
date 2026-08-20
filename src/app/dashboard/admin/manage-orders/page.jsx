@@ -6,8 +6,9 @@ export const metadata = {
   description: "Monitor and manage all orders across the ReSell Hub platform.",
 };
 
-const ManageOrders = async () => {
-  const orders = await getAllOrders();
+const ManageOrders = async ({ searchParams }) => {
+  const params = await searchParams;
+  const orders = await getAllOrders(params?.status, params?.search);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">

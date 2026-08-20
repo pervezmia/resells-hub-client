@@ -1,14 +1,19 @@
 "use server";
 
+import { getTokenServer } from "../getTokenServer";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export async function updateUserStatus(id, status, requesterId) {
   try {
+    const token = await getTokenServer();
 
     const res = await fetch(`${baseUrl}/api/users/${id}/status`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ status, requesterId }),
     });
     if (!res.ok) {
@@ -23,14 +28,18 @@ export async function updateUserStatus(id, status, requesterId) {
 }
 
 export async function deleteUser(id, requesterId) {
-
   try {
-    const res = await fetch(
-      `${baseUrl}/api/users/${id}?requesterId=${requesterId}`,{ 
-        
-        method: "DELETE", 
+    const token = await getTokenServer();
 
-    });
+    const res = await fetch(
+      `${baseUrl}/api/users/${id}?requesterId=${requesterId}`,
+      {
+        method: "DELETE",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      },
+    );
     if (!res.ok) {
       const data = await res.json();
       return { error: data?.error || "Failed to delete user." };

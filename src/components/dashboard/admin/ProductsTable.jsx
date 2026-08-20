@@ -1,7 +1,14 @@
 "use client";
 
-import { Table, Button, AlertDialog, Select, ListBox } from "@heroui/react";
-import { Check, Xmark, TrashBin } from "@gravity-ui/icons";
+import {
+  Table,
+  Button,
+  AlertDialog,
+  Select,
+  ListBox,
+  Input,
+} from "@heroui/react";
+import { Check, Xmark, TrashBin, Eye, Magnifier } from "@gravity-ui/icons";
 import { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
@@ -27,14 +34,29 @@ export default function ProductsTable({ products = [] }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const [search, setSearch] = useState(searchParams.get("search") || "");
   const [updatingId, setUpdatingId] = useState(null);
   const [targetProduct, setTargetProduct] = useState(null);
 
-  const handleFilterChange = (key) => {
+  const updateParams = (updates) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (key) params.set("approvalStatus", key);
-    else params.delete("approvalStatus");
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    });
     router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const handleFilterChange = (key) => {
+    updateParams({ approvalStatus: key });
+    // const params = new URLSearchParams(searchParams.toString());
+    // if (key) params.set("approvalStatus", key);
+    // else params.delete("approvalStatus");
+    // router.push(`${pathname}?${params.toString()}`);
+  };
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    updateParams({ search });
   };
 
   const handleApproval = async (id, approvalStatus) => {
@@ -42,7 +64,9 @@ export default function ProductsTable({ products = [] }) {
     try {
       await updateProductApproval(id, approvalStatus);
       toast.success(
-        approvalStatus === "approved" ? "Product approved." : "Product rejected."
+        approvalStatus === "approved"
+          ? "Product approved."
+          : "Product rejected.",
       );
       router.refresh();
     } catch (err) {
@@ -75,7 +99,7 @@ export default function ProductsTable({ products = [] }) {
 
   return (
     <>
-      <div className="mb-4">
+      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <Select
           aria-label="Filter by approval status"
           placeholder="Filter"
@@ -98,6 +122,50 @@ export default function ProductsTable({ products = [] }) {
             </ListBox>
           </Select.Popover>
         </Select>
+
+        <form onSubmit={handleSearchSubmit} className="w-full md:w-72">
+          <div className="relative">
+            <Magnifier
+              width={16}
+              height={16}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+            />
+            <Input
+              aria-label="Search products by title"
+              variant="secondary"
+              placeholder="Search products..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className={search ? "pl-9 pr-20" : "pl-9 pr-12"}
+            />
+            {search && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                isIconOnly
+                aria-label="Clear search"
+                className="absolute right-12 top-1/2 -translate-y-1/2"
+                onPress={() => {
+                  setSearch("");
+                  updateParams({ search: "" });
+                }}
+              >
+                <Xmark width={14} height={14} />
+              </Button>
+            )}
+            <Button
+              type="submit"
+              variant="ghost"
+              size="sm"
+              isIconOnly
+              aria-label="Search"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2"
+            >
+              <Magnifier width={16} height={16} />
+            </Button>
+          </div>
+        </form>
       </div>
 
       {!products.length ? (
@@ -107,7 +175,10 @@ export default function ProductsTable({ products = [] }) {
       ) : (
         <Table variant="secondary">
           <Table.ScrollContainer>
-            <Table.Content aria-label="Manage products" className="min-w-[750px]">
+            <Table.Content
+              aria-label="Manage products"
+              className="min-w-[750px]"
+            >
               <Table.Header>
                 <Table.Column isRowHeader>Product</Table.Column>
                 <Table.Column>Seller</Table.Column>
@@ -141,7 +212,9 @@ export default function ProductsTable({ products = [] }) {
                       <Table.Cell className="text-sm text-muted">
                         {product.sellerInfo?.name || "—"}
                       </Table.Cell>
-                      <Table.Cell>৳{product.price?.toLocaleString()}</Table.Cell>
+                      <Table.Cell>
+                        ৳{product.price?.toLocaleString()}
+                      </Table.Cell>
                       <Table.Cell>
                         <span
                           className={`rounded-full px-2.5 py-1 text-xs font-medium capitalize ${
@@ -153,6 +226,18 @@ export default function ProductsTable({ products = [] }) {
                       </Table.Cell>
                       <Table.Cell>
                         <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            isIconOnly
+                            aria-label="View product"
+                            onPress={() =>
+                              router.push(`/products/${product._id}`)
+                            }
+                          >
+                            <Eye width={16} height={16} />
+                          </Button>
+
                           {approvalStatus !== "approved" && (
                             <Button
                               size="sm"
@@ -160,9 +245,15 @@ export default function ProductsTable({ products = [] }) {
                               isIconOnly
                               aria-label="Approve product"
                               isDisabled={isUpdating}
-                              onPress={() => handleApproval(product._id, "approved")}
+                              onPress={() =>
+                                handleApproval(product._id, "approved")
+                              }
                             >
-                              <Check width={16} height={16} className="text-success" />
+                              <Check
+                                width={16}
+                                height={16}
+                                className="text-success"
+                              />
                             </Button>
                           )}
                           {approvalStatus !== "rejected" && (
@@ -172,9 +263,15 @@ export default function ProductsTable({ products = [] }) {
                               isIconOnly
                               aria-label="Reject product"
                               isDisabled={isUpdating}
-                              onPress={() => handleApproval(product._id, "rejected")}
+                              onPress={() =>
+                                handleApproval(product._id, "rejected")
+                              }
                             >
-                              <Xmark width={16} height={16} className="text-danger" />
+                              <Xmark
+                                width={16}
+                                height={16}
+                                className="text-danger"
+                              />
                             </Button>
                           )}
                           <Button
@@ -185,7 +282,11 @@ export default function ProductsTable({ products = [] }) {
                             isDisabled={isUpdating}
                             onPress={() => setTargetProduct(product)}
                           >
-                            <TrashBin width={16} height={16} className="text-danger" />
+                            <TrashBin
+                              width={16}
+                              height={16}
+                              className="text-danger"
+                            />
                           </Button>
                         </div>
                       </Table.Cell>
@@ -210,7 +311,8 @@ export default function ProductsTable({ products = [] }) {
                 <AlertDialog.Heading>Delete this product?</AlertDialog.Heading>
               </AlertDialog.Header>
               <AlertDialog.Body>
-                <strong>{targetProduct?.title}</strong> will be permanently deleted.
+                <strong>{targetProduct?.title}</strong> will be permanently
+                deleted.
               </AlertDialog.Body>
               <AlertDialog.Footer>
                 <AlertDialog.CloseTrigger className="text-foreground">
