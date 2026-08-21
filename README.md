@@ -4,13 +4,13 @@ An online marketplace where users can safely and efficiently buy and sell pre-ow
 
 ## Live URL
 
-- **Client:** _(add your deployed client URL here)_
-- **Server:** _(add your deployed server URL here)_
+- **Client:** https://resells-hub-client.vercel.app/
+- **Server:** https://resells-hub-server.vercel.app/
 
 ## Admin Credentials
 
-- **Email:** _(add admin email here)_
-- **Password:** _(add admin password here)_
+- **Email:** adminpro@gmail.com
+- **Password:** @admin200
 
 ## Key Features
 
@@ -118,10 +118,10 @@ npm run dev
 # Server
 cd resells-hub-server
 npm install
-npm run dev
+node index.js
 ```
 
 ## GitHub Repositories
 
-- **Client:** _(add your client repo link here)_
-- **Server:** _(add your server repo link here)_
+- **Client:** https://github.com/pervezmia/resells-hub-client
+- **Server:** https://github.com/pervezmia/resells-hub-server
