@@ -118,7 +118,7 @@ npm run dev
 # Server
 cd resells-hub-server
 npm install
-node index.js
+npm run dev
 ```
 
 ## GitHub Repositories

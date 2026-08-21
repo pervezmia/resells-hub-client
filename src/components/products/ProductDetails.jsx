@@ -16,11 +16,13 @@ import toast from "react-hot-toast";
 import { addToWishlist, removeFromWishlist } from "@/lib/actions/wishlist";
 import { useCart } from "@/context/CartContext";
 import { getSafeImage } from "@/lib/utils";
+import RecentlyViewedProducts from "./RecentlyViewedProducts";
 
 export default function ProductDetails({
   product,
   buyerId,
   initialWishlisted = false,
+   recentlyViewed = [] 
 }) {
   const router = useRouter();
   const [activeImage, setActiveImage] = useState(0);
@@ -214,6 +216,7 @@ export default function ProductDetails({
           </div>
         </div>
       </div>
+       <RecentlyViewedProducts items={recentlyViewed} />
     </div>
   );
 }
