@@ -14,9 +14,10 @@ const navLinks = [
   { name: "Home", href: "/" },
   { name: "Products", href: "/products" },
   { name: "Categories", href: "/categories" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
   { name: "Dashboard", href: "/dashboard", isAccent: true },
 ];
-
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
