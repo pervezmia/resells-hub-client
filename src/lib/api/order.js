@@ -1,3 +1,5 @@
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
 
 export async function getSellerOrders(sellerId) {
   if (!sellerId) return [];
@@ -38,4 +40,19 @@ export async function getAllOrders(status = "", search = "") {
   });
   if (!res.ok) return [];
   return res.json();
+}
+
+// Public status count fetcher
+export async function getCompletedOrdersCount() {
+  try {
+    const res = await fetch(`${baseUrl}/api/orders/count?status=delivered`, {
+      cache: "no-store",
+    });
+
+    if (!res.ok) return 0;
+    const data = await res.json();
+    return data.count || 0;
+  } catch (error) {
+    return 0;
+  }
 }

@@ -1,11 +1,11 @@
-import { getAllUsers } from "@/lib/api/user";
+import { getPublicUsers } from "@/lib/api/user";
 import { getAllOrders } from "@/lib/api/order";
 import { Surface, Avatar } from "@heroui/react";
 import { ShieldCheck } from "@gravity-ui/icons";
 
 export default async function TrustedSellers() {
   const [sellers, orders] = await Promise.all([
-    getAllUsers("").then((users) => users.filter((u) => u.role === "seller")),
+    getPublicUsers("seller"),
     getAllOrders(),
   ]);
 
